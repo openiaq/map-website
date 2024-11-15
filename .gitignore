@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# vite static output
+/dist
+
 # production
 /build
 

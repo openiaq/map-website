@@ -1,6 +1,5 @@
-import { Map, useControl, NavigationControl } from 'react-map-gl';
-import { MapboxOverlay } from '@deck.gl/mapbox';
-import { DeckProps } from '@deck.gl/core';
+import { Map, NavigationControl, ViewState } from 'react-map-gl';
+import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -17,19 +16,6 @@ const mapStyles = {
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
 }
 
-/*
-function handleMove(evt: { viewState: ViewState }) {
-  console.log(`>>>>> viewState=${JSON.stringify(evt.viewState)}`);
-};
-*/
-
-
-// From example https://deck.gl/docs/developer-guide/base-maps/using-with-mapbox
-function DeckGLOverlay(props: DeckProps) {
-  const overlay = useControl<MapboxOverlay>(() => new MapboxOverlay(props));
-  overlay.setProps(props);
-  return null;
-}
 
 //-----------------------------------------------------------------------------
 export default function MapComponent() {
@@ -48,20 +34,22 @@ export default function MapComponent() {
   ];
 
   return (
-    <Map
+    <DeckGL
       initialViewState={{
         longitude: 0.45,
         latitude: 51.47,
         zoom: 11
       }}
-      //onMove={handleMove}
+      controller
+      layers={layers}
       style={{ width: '100%', height: '100vh' }}
-      mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-      mapStyle={mapStyles.MAPBOX_DARK}
     >
-      <DeckGLOverlay layers={layers} interleaved={true}/>
-      <NavigationControl position="top-left" showCompass={false} />
-
-    </Map>
+      <Map
+        mapStyle={mapStyles.MAPBOX_DARK}
+        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+      >
+        <NavigationControl position="top-left" showCompass={false} />
+      </Map>
+    </DeckGL>
   );
 }

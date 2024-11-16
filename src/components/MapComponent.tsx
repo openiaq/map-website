@@ -59,8 +59,8 @@ export default function MapComponent() {
       mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       mapStyle={mapStyles.MAPBOX_DARK}
     >
-      <DeckGLOverlay layers={layers}/>
-      <NavigationControl position="top-left" showCompass={false}/>
+      <DeckGLOverlay layers={layers} interleaved={true}/>
+      <NavigationControl position="top-left" showCompass={false} />
 
     </Map>
   );

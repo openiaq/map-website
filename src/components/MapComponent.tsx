@@ -1,8 +1,11 @@
 import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import { ScatterplotLayer } from '@deck.gl/layers';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { MapView } from '@deck.gl/core';
+import { TileLayer } from '@deck.gl/geo-layers';
 
+
+import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -20,7 +23,33 @@ const mapStyles = {
 //-----------------------------------------------------------------------------
 export default function MapComponent() {
 
+  const tileLayer = new TileLayer<ImageBitmap>({
+    // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
+    data: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+
+    // Since these OSM tiles support HTTP/2, we can make many concurrent requests
+    // and we aren't limited by the browser to a certain number per domain.
+    maxRequests: 20,
+
+    pickable: true,
+    minZoom: 0,
+    maxZoom: 19,
+    tileSize: 256,
+    zoomOffset: devicePixelRatio === 1 ? -1 : 0,
+    renderSubLayers: props => {
+      const {boundingBox} = props.tile;
+      return new BitmapLayer(props, {
+        data: null,
+        image: props.data,
+        bounds: [boundingBox[0][0], boundingBox[0][1], boundingBox[1][0], boundingBox[1][1]]
+      });
+    },
+  });
+
+
+
   const layers = [
+    tileLayer,
     new ScatterplotLayer({
       id: 'deckgl-circle',
       data: "/data.json",
@@ -44,22 +73,25 @@ export default function MapComponent() {
 
   return (
     <DeckGL
+      layers={layers}
+      views={new MapView({ repeat: true })}
       initialViewState={{
         longitude: 0.45,
         latitude: 51.47,
         zoom: 5
       }}
-      controller
-      getTooltip={({ object }) => object && "CO2 " + object.co2Avg}
+      controller={true}
+      getTooltip={({ object: obj }) => obj && `${obj.name}: CO\u2082 ${obj.co2Avg}`}
 
-      layers={layers}
     >
+      {/*
       <Map
         mapStyle={mapStyles.MAPBOX_DARK}
         mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       >
         <NavigationControl position="top-left" showCompass={false} />
       </Map>
+      */}
     </DeckGL>
   );
 }

@@ -1,13 +1,11 @@
-import { Map, NavigationControl } from 'react-map-gl';
+//import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import { MapView } from '@deck.gl/core';
-import { TileLayer } from '@deck.gl/geo-layers';
-
-
+import { GeoBoundingBox, TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-
+/*
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const mapStyles = {
@@ -18,7 +16,7 @@ const mapStyles = {
   CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
 }
-
+*/
 
 //-----------------------------------------------------------------------------
 export default function MapComponent() {
@@ -36,14 +34,16 @@ export default function MapComponent() {
     maxZoom: 19,
     tileSize: 256,
     zoomOffset: devicePixelRatio === 1 ? -1 : 0,
-    renderSubLayers: props => {
-      const {boundingBox} = props.tile;
-      return new BitmapLayer(props, {
-        data: null,
-        image: props.data,
-        bounds: [boundingBox[0][0], boundingBox[0][1], boundingBox[1][0], boundingBox[1][1]]
-      });
-    },
+    renderSubLayers: (props: any) => {
+      const {west, north, east, south} = props.tile.bbox as GeoBoundingBox;
+      return [
+        new BitmapLayer(props, {
+          data: undefined,
+          image: props.data,
+          bounds: [west, south, east, north]
+        }),
+      ];
+  },
   });
 
 

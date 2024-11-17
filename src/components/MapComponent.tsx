@@ -1,11 +1,11 @@
-import { Map, NavigationControl } from 'react-map-gl/maplibre';
+import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 
-//const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const mapStyles = {
   DEFAULT: "mapbox://styles/mapbox/streets-v9",
@@ -30,9 +30,15 @@ export default function MapComponent() {
       ],
       */
       getPosition: d => d.position,
-      getFillColor: d => { return d.co2Avg < 1000 ? [0, 255, 0, 100] : [255, 0, 0, 100] },
+      getFillColor: d => {
+        return d.co2Avg < 600 ? [0, 0, 255, 100] :
+          d.co2Avg < 1000 ? [255, 255, 0, 100] :
+            d.co2Avg < 1200 ? [255, 165, 0, 100] :
+              [255, 0, 0, 100]
+      },
       radiusUnits: 'pixels',
       getRadius: 6,
+      pickable: true
     })
   ];
 
@@ -44,11 +50,13 @@ export default function MapComponent() {
         zoom: 5
       }}
       controller
+      getTooltip={({ object }) => object && "CO2 " + object.co2Avg}
+
       layers={layers}
     >
       <Map
-        mapStyle={mapStyles.CARTO_LIGHT}
-      //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        mapStyle={mapStyles.MAPBOX_DARK}
+        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       >
         <NavigationControl position="top-left" showCompass={false} />
       </Map>

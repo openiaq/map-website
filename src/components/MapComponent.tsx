@@ -1,11 +1,11 @@
-import { Map, NavigationControl, ViewState } from 'react-map-gl';
+import { Map, NavigationControl } from 'react-map-gl/maplibre';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-import 'mapbox-gl/dist/mapbox-gl.css';
 
 
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+//const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const mapStyles = {
   DEFAULT: "mapbox://styles/mapbox/streets-v9",
@@ -29,7 +29,7 @@ export default function MapComponent() {
       getPosition: d => d.position,
       getFillColor: [255, 0, 0, 50],
       getRadius: 1000,
-      beforeId: 'waterway-label' // In interleaved mode render the layer under map labels
+      //beforeId: 'waterway-label' // In interleaved mode render the layer under map labels
     })
   ];
 
@@ -42,11 +42,10 @@ export default function MapComponent() {
       }}
       controller
       layers={layers}
-      style={{ width: '100%', height: '100vh' }}
     >
       <Map
-        mapStyle={mapStyles.MAPBOX_DARK}
-        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        mapStyle={mapStyles.CARTO_DARK}
+        //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       >
         <NavigationControl position="top-left" showCompass={false} />
       </Map>

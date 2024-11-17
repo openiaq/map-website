@@ -23,13 +23,16 @@ export default function MapComponent() {
   const layers = [
     new ScatterplotLayer({
       id: 'deckgl-circle',
-      data: [
-        { position: [0.45, 51.47] }
+      data: "/data.json",
+      /*
+      [
+        { position: [0.45, 51.47] } // longitude, latitude
       ],
+      */
       getPosition: d => d.position,
-      getFillColor: [255, 0, 0, 50],
-      getRadius: 1000,
-      //beforeId: 'waterway-label' // In interleaved mode render the layer under map labels
+      getFillColor: d => { return d.co2Avg < 1000 ? [0, 255, 0, 100] : [255, 0, 0, 100] },
+      radiusUnits: 'pixels',
+      getRadius: 6,
     })
   ];
 
@@ -38,14 +41,14 @@ export default function MapComponent() {
       initialViewState={{
         longitude: 0.45,
         latitude: 51.47,
-        zoom: 11
+        zoom: 5
       }}
       controller
       layers={layers}
     >
       <Map
-        mapStyle={mapStyles.CARTO_DARK}
-        //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        mapStyle={mapStyles.CARTO_LIGHT}
+      //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       >
         <NavigationControl position="top-left" showCompass={false} />
       </Map>

@@ -5,6 +5,7 @@ import { GeoBoundingBox, TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+
 /*
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -35,7 +36,7 @@ export default function MapComponent() {
     tileSize: 256,
     zoomOffset: devicePixelRatio === 1 ? -1 : 0,
     renderSubLayers: (props: any) => {
-      const {west, north, east, south} = props.tile.bbox as GeoBoundingBox;
+      const { west, north, east, south } = props.tile.bbox as GeoBoundingBox;
       return [
         new BitmapLayer(props, {
           data: undefined,
@@ -43,21 +44,44 @@ export default function MapComponent() {
           bounds: [west, south, east, north]
         }),
       ];
-  },
+    },
   });
 
-
+  type Measurement = {
+    nwrID: string,
+    [key: string]: unknown,
+  };
+  type VenueMeasurements = {
+    [venueId: string]: Measurement[]; // Keys are strings, values are arrays of numbers
+  };
 
   const layers = [
     tileLayer,
     new ScatterplotLayer({
-      id: 'deckgl-circle',
-      data: "/data.json",
-      /*
-      [
-        { position: [0.45, 51.47] } // longitude, latitude
-      ],
-      */
+      id: 'scatterplot-layer',
+      data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
+      dataTransform: (data) => {
+        if (!Array.isArray(data)) {
+          return [] as any;
+        }
+        const arrayData: Measurement[] = data;
+        let venues: VenueMeasurements = {};
+        arrayData.map(item => {
+          const venueMeasurements = venues[item.nwrID] = venues[item.nwrID] || [];
+          venueMeasurements.push(item);
+        });
+
+        const nVenues = Object.keys(venues).length;
+        console.log(">>>>> nVenues=" + nVenues);
+        return Object.values(venues).map(measurements => {
+          return {
+            position: [measurements[0].longitude, measurements[0].latitude],
+            name: measurements[0].name,
+            co2Avg: measurements[0].co2readingsAvg, // TODO: reduce() for avg of avgs
+            allMeasurements: measurements
+          }
+        });
+      },
       getPosition: d => d.position,
       getFillColor: d => {
         return d.co2Avg < 600 ? [0, 0, 255, 100] :
@@ -81,7 +105,7 @@ export default function MapComponent() {
         zoom: 5
       }}
       controller={true}
-      getTooltip={({ object: obj }) => obj && `${obj.name}: CO\u2082 ${obj.co2Avg}`}
+      getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
 
     >
       {/*

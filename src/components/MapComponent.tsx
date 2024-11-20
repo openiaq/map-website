@@ -20,16 +20,46 @@ const mapStyles = {
 */
 
 //-----------------------------------------------------------------------------
+// Re-organize data from https://indoorco2map.com/chartdata/IndoorCO2MapData.json
+// to aggregate measurements from the same venues
+function dataTransform2(data: unknown) {
+  if (!Array.isArray(data)) {
+    return [] as any;
+  }
+  type Measurement = {
+    nwrID: string, // Unique venue ID
+    [key: string]: unknown,
+  };
+  const arrayData: Measurement[] = data;
+  // Aggregate measurements from the same venue
+  let venues: {
+    [venueId: string]: Measurement[];
+  } = {};
+  arrayData.map(item => {
+    const venueMeasurements = venues[item.nwrID] = venues[item.nwrID] || [];
+    venueMeasurements.push(item);
+  });
+  // console.log(`>>>>> nVenues=${Object.keys(venues).length}`);
+  return Object.values(venues).map(measurements => {
+    return {
+      position: [measurements[0].longitude, measurements[0].latitude],
+      name: measurements[0].name,
+      co2Avg: measurements[0].co2readingsAvg, // TODO: reduce() for avg of avgs
+      allMeasurements: measurements
+    }
+  });
+}
+
+
+//-----------------------------------------------------------------------------
 export default function MapComponent() {
 
   const tileLayer = new TileLayer<ImageBitmap>({
     // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
     data: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-
     // Since these OSM tiles support HTTP/2, we can make many concurrent requests
     // and we aren't limited by the browser to a certain number per domain.
     maxRequests: 20,
-
     pickable: true,
     minZoom: 0,
     maxZoom: 19,
@@ -47,58 +77,25 @@ export default function MapComponent() {
     },
   });
 
-  type Measurement = {
-    nwrID: string,
-    [key: string]: unknown,
-  };
-  type VenueMeasurements = {
-    [venueId: string]: Measurement[]; // Keys are strings, values are arrays of numbers
-  };
-
-  const layers = [
-    tileLayer,
-    new ScatterplotLayer({
-      id: 'scatterplot-layer',
-      data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
-      dataTransform: (data) => {
-        if (!Array.isArray(data)) {
-          return [] as any;
-        }
-        const arrayData: Measurement[] = data;
-        let venues: VenueMeasurements = {};
-        arrayData.map(item => {
-          const venueMeasurements = venues[item.nwrID] = venues[item.nwrID] || [];
-          venueMeasurements.push(item);
-        });
-
-        const nVenues = Object.keys(venues).length;
-        console.log(">>>>> nVenues=" + nVenues);
-        return Object.values(venues).map(measurements => {
-          return {
-            position: [measurements[0].longitude, measurements[0].latitude],
-            name: measurements[0].name,
-            co2Avg: measurements[0].co2readingsAvg, // TODO: reduce() for avg of avgs
-            allMeasurements: measurements
-          }
-        });
-      },
-      getPosition: d => d.position,
-      getFillColor: d => {
-        return d.co2Avg < 600 ? [0, 0, 255, 100] :
-          d.co2Avg < 1000 ? [255, 255, 0, 100] :
-            d.co2Avg < 1200 ? [255, 165, 0, 100] :
-              [255, 0, 0, 100]
-      },
-      radiusUnits: 'pixels',
-      getRadius: 6,
-      pickable: true
-    })
-  ];
+  const scatterPlotLayer = new ScatterplotLayer({
+    id: 'scatterplot-layer',
+    data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
+    dataTransform: dataTransform2,
+    getFillColor: d => {
+      return d.co2Avg < 600 ? [0, 0, 255, 100] :
+        d.co2Avg < 1000 ? [255, 255, 0, 100] :
+          d.co2Avg < 1200 ? [255, 165, 0, 100] :
+            [255, 0, 0, 100]
+    },
+    radiusUnits: 'pixels',
+    getRadius: 6,
+    pickable: true
+  });
 
   return (
     <DeckGL
-      layers={layers}
-      views={new MapView({ repeat: true })}
+      layers={[tileLayer, scatterPlotLayer]}
+      views={new MapView()}
       initialViewState={{
         longitude: 0.45,
         latitude: 51.47,

@@ -9,14 +9,20 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 // const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY;
 
 const mapStyles = {
   DEFAULT: "mapbox://styles/mapbox/streets-v9",
   MAPBOX_LIGHT: "mapbox://styles/mapbox/light-v9",
   MAPBOX_DARK: "mapbox://styles/mapbox/dark-v9",
-  CARTO_LIGHT: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-  CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
+
+  CARTO_LIGHT: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json", // No key required
+  CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json", // No key required
+
+  MAPTILER_LIGHT: `https://api.maptiler.com/maps/streets-v2-light/style.json?key=${MAPTILER_KEY}`,
+  MAPTILER_DARK: `https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${MAPTILER_KEY}`,
+  MAPTILER_OSM: `https://api.maptiler.com/maps/openstreetmap/style.json?key=${MAPTILER_KEY}`,
 }
 
 //-----------------------------------------------------------------------------
@@ -60,6 +66,10 @@ function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, nu
 
 //-----------------------------------------------------------------------------
 export default function MapComponent(props: { isDarkMode: boolean }) {
+  /*
+   To use OSM, remove <Map> component below and use this as first element
+   of the DeckGL layers prop
+  */
   const osmTileLayer = new TileLayer<ImageBitmap>({
     // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
     data: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
@@ -112,6 +122,7 @@ export default function MapComponent(props: { isDarkMode: boolean }) {
     >
       <Map
         mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
+      // mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
       />
     </DeckGL>
   );

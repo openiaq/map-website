@@ -1,4 +1,4 @@
-# OpenIAQ map website
+# OpenIAQ map
 
 An interactive map displaying indoor air quality measurement data from multiple sources.
 

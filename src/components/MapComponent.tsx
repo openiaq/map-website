@@ -3,11 +3,12 @@ import DeckGL from '@deck.gl/react';
 import { MapView } from '@deck.gl/core';
 import { GeoBoundingBox, TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { Map } from 'react-map-gl/maplibre';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 
-/*
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+
+// const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const mapStyles = {
   DEFAULT: "mapbox://styles/mapbox/streets-v9",
@@ -17,7 +18,6 @@ const mapStyles = {
   CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
 }
-*/
 
 //-----------------------------------------------------------------------------
 // Re-organize data from https://indoorco2map.com/chartdata/IndoorCO2MapData.json
@@ -50,9 +50,16 @@ function dataTransform2(data: unknown) {
   });
 }
 
+function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, number, number] {
+  const alpha = Math.round(255 * alphaFraction);
+  return ppm < 600 ? [0, 0, 255, alpha] :
+    ppm < 1000 ? [255, 255, 0, alpha] :
+      ppm < 1200 ? [255, 165, 0, alpha] :
+        [255, 0, 0, alpha];
+}
 
 //-----------------------------------------------------------------------------
-export default function MapComponent() {
+export default function MapComponent(props: { isDarkMode: boolean }) {
 
   const tileLayer = new TileLayer<ImageBitmap>({
     // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
@@ -81,20 +88,19 @@ export default function MapComponent() {
     id: 'scatterplot-layer',
     data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
     dataTransform: dataTransform2,
-    getFillColor: d => {
-      return d.co2Avg < 600 ? [0, 0, 255, 100] :
-        d.co2Avg < 1000 ? [255, 255, 0, 100] :
-          d.co2Avg < 1200 ? [255, 165, 0, 100] :
-            [255, 0, 0, 100]
-    },
+    getFillColor: d => ppmColor(d.co2Avg, .20),
+    stroked: true,
+    getLineColor: d => ppmColor(d.co2Avg, .50),
+    getLineWidth: 1,
+    lineWidthUnits: 'pixels',
     radiusUnits: 'pixels',
-    getRadius: 6,
+    getRadius: 10,
     pickable: true
   });
 
   return (
     <DeckGL
-      layers={[tileLayer, scatterPlotLayer]}
+      layers={[scatterPlotLayer]}
       views={new MapView()}
       initialViewState={{
         longitude: 0.45,
@@ -105,14 +111,9 @@ export default function MapComponent() {
       getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
 
     >
-      {/*
       <Map
-        mapStyle={mapStyles.MAPBOX_DARK}
-        mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-      >
-        <NavigationControl position="top-left" showCompass={false} />
-      </Map>
-      */}
+        mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
+      />
     </DeckGL>
   );
 }

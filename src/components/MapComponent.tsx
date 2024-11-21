@@ -60,8 +60,7 @@ function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, nu
 
 //-----------------------------------------------------------------------------
 export default function MapComponent(props: { isDarkMode: boolean }) {
-
-  const tileLayer = new TileLayer<ImageBitmap>({
+  const osmTileLayer = new TileLayer<ImageBitmap>({
     // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
     data: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
     // Since these OSM tiles support HTTP/2, we can make many concurrent requests

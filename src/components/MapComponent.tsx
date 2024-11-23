@@ -8,14 +8,16 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 
-// const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+//const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY;
 
-const mapStyles = {
+export const mapStyles: { [key: string]: string } = {
+  /*
   DEFAULT: "mapbox://styles/mapbox/streets-v9",
   MAPBOX_LIGHT: "mapbox://styles/mapbox/light-v9",
   MAPBOX_DARK: "mapbox://styles/mapbox/dark-v9",
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
+  */
 
   CARTO_LIGHT: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json", // No key required
   CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json", // No key required
@@ -65,7 +67,7 @@ function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, nu
 }
 
 //-----------------------------------------------------------------------------
-export default function MapComponent(props: { isDarkMode: boolean }) {
+export default function MapComponent(props: { mapStyle: string }) {
   /*
    To use OSM, remove <Map> component below and use this as first element
    of the DeckGL layers prop
@@ -122,7 +124,9 @@ export default function MapComponent(props: { isDarkMode: boolean }) {
     >
       <Map
         //  mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
-        mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
+        //mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
+        mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
+        //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       />
     </DeckGL>
   );

@@ -5,7 +5,7 @@ An interactive map displaying indoor air quality measurement data from multiple 
 
 ## Developed using React + TypeScript + Vite
 
-To run in development:
+To run in development ([Node.js](https://nodejs.org/en/download) must be installed):
 
 ```bash
 $ npm install

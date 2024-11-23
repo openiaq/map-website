@@ -15,6 +15,7 @@
     "@deck.gl/layers": "^9.0.35",
     "@deck.gl/mapbox": "^9.0.35",
     "@deck.gl/react": "^9.0.35",
+    "@heroicons/react": "^2.2.0",
     "mapbox-gl": "^3.8.0",
     "maplibre-gl": "^4.7.1",
     "react": "^18.3.1",

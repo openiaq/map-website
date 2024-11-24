@@ -40,7 +40,7 @@ const SlideInMenu: React.FC<SlideInMenuProps> = ({
 
       {/* Slide-in Menu */}
       <div
-        className={`fixed top-0 ${position}-0 bg-gray-800 text-white transform transition-transform ${
+        className={`fixed top-0 ${position}-0 bg-gray-800 text-white transform transition-transform p${position[0]}-4 ${
           isOpen
             ? "translate-x-0"
             : position === "right"

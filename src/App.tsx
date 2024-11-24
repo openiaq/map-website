@@ -4,10 +4,11 @@ import MapComponent, { mapStyles } from "./components/MapComponent";
 import SlideInMenu from './components/SlideInMenu';
 
 import { MapIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ShoppingCartIcon, MoonIcon } from "@heroicons/react/24/solid";
 
-import { MdLocalGroceryStore, MdOutlineLocalGroceryStore } from "react-icons/md";
+import { IoMapSharp, IoCloseOutline } from "react-icons/io5";
 import { IoRestaurantSharp, IoRestaurantOutline } from "react-icons/io5";
+import { IoPricetagsSharp, IoPricetagsOutline } from "react-icons/io5";
+import { IoCart, IoCartOutline } from "react-icons/io5";
 
 
 
@@ -36,8 +37,8 @@ function App() {
           <MapComponent mapStyle={mapStyle} />
           <SlideInMenu
             menuItems={menuItems}
-            openIcon={<MapIcon className='h-6 w-6' />}
-            closeIcon={<XMarkIcon className='h-6 w-6' />}
+            openIcon={<IoMapSharp className='h-6 w-12' />}
+            closeIcon={<IoCloseOutline className='h-6 w-6' />}
             position='right'
             topOffset='1rem'
           />
@@ -54,8 +55,8 @@ function App() {
             <ToggleSwitch
               initialState={true}
               onToggle={handleToggle}
-              onIcon={<MdLocalGroceryStore className="w-6 h-8 text-gray-700" />}
-              offIcon={<MdOutlineLocalGroceryStore className="w-6 h-8 text-gray-700" />}
+              onIcon={<IoCart className="w-6 h-8 text-gray-700" />}
+              offIcon={<IoCartOutline className="w-6 h-8 text-gray-700" />}
               topOffset='4rem'
             />
             <ToggleSwitch
@@ -64,6 +65,13 @@ function App() {
               onIcon={<IoRestaurantSharp className="w-6 h-8 text-gray-700" />}
               offIcon={<IoRestaurantOutline className="w-6 h-8 text-gray-700" />}
               topOffset='7rem'
+            />
+            <ToggleSwitch
+              initialState={true}
+              onToggle={handleToggle}
+              onIcon={<IoPricetagsSharp className="w-6 h-8 text-gray-700" />}
+              offIcon={<IoPricetagsOutline className="w-6 h-8 text-gray-700" />}
+              topOffset='10rem'
             />
 
           </div>

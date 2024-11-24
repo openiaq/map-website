@@ -1,6 +1,6 @@
 //import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import { MapView } from '@deck.gl/core';
+import { MapController, MapView } from '@deck.gl/core';
 import { GeoBoundingBox, TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl/maplibre';
@@ -108,7 +108,7 @@ export default function MapComponent(props: { mapStyle: string }) {
     getLineWidth: 1,
     lineWidthUnits: 'pixels',
     radiusUnits: 'pixels',
-    getRadius: 8,
+    getRadius: 7,
     pickable: true
   });
 
@@ -121,7 +121,12 @@ export default function MapComponent(props: { mapStyle: string }) {
         latitude: 51.47,
         zoom: 5
       }}
-      controller={true}
+      controller={{
+        scrollZoom: true,      // Allow zooming with the scroll wheel
+        dragPan: true,         // Allow panning (XY movement)
+        dragRotate: false,     // Disable map rotation
+        touchRotate: false     // ...disable touch-based rotation
+      }}
       getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
 
     >

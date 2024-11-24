@@ -30,6 +30,7 @@ export const mapStyles: { [key: string]: string } = {
 //-----------------------------------------------------------------------------
 // Re-organize data from https://indoorco2map.com/chartdata/IndoorCO2MapData.json
 // to aggregate measurements from the same venues
+/*
 function dataTransform2(data: unknown) {
   if (!Array.isArray(data)) {
     return [] as any;
@@ -56,6 +57,67 @@ function dataTransform2(data: unknown) {
       allMeasurements: measurements
     }
   });
+}*/
+
+function dataTransform2(data: unknown) {
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  type Measurement = {
+    nwrID: string;
+    longitude: number;
+    latitude: number;
+    name: string;
+    co2readingsAvg: number;
+    [key: string]: unknown;
+  };
+
+  const arrayData: Measurement[] = data;
+  const venues: { [venueId: string]: Measurement[] } = {};
+
+  arrayData.forEach((item) => {
+    const venueMeasurements = (venues[item.nwrID] = venues[item.nwrID] || []);
+    venueMeasurements.push(item);
+  });
+
+  function randomPointAround(lat: number, lon: number, radiusKm: number) {
+    const radiusInDegrees = radiusKm / 111; // Approximation for degrees per km
+    const u = Math.random();
+    const v = Math.random();
+    const w = radiusInDegrees * Math.sqrt(u);
+    const t = 2 * Math.PI * v;
+    const x = w * Math.cos(t);
+    const y = w * Math.sin(t);
+    const newLat = lat + y;
+    const newLon = lon + x / Math.cos((lat * Math.PI) / 180);
+    return [newLon, newLat];
+  }
+
+  const expandedData = Object.values(venues).flatMap((measurements) => {
+    const { longitude, latitude, name, co2readingsAvg } = measurements[0];
+    const points = Array.from({ length: 20 }, () => {
+      const [newLon, newLat] = randomPointAround(latitude, longitude, 100);
+      return {
+        position: [newLon, newLat],
+        name: `${name} (Randomized)`,
+        co2Avg: co2readingsAvg,
+        allMeasurements: measurements,
+      };
+    });
+
+    // Include the original point as well
+    points.push({
+      position: [longitude, latitude],
+      name,
+      co2Avg: co2readingsAvg,
+      allMeasurements: measurements,
+    });
+
+    return points;
+  });
+
+  return expandedData;
 }
 
 function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, number, number] {

@@ -60,10 +60,11 @@ function dataTransform2(data: unknown) {
 
 function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, number, number] {
   const alpha = Math.round(255 * alphaFraction);
-  return ppm < 600 ? [0, 0, 255, alpha] :
-    ppm < 1000 ? [255, 255, 0, alpha] :
-      ppm < 1200 ? [255, 165, 0, alpha] :
-        [255, 0, 0, alpha];
+  return ppm < 600 ? [44,123,182, alpha] :
+  ppm < 800 ? [171,217,233, alpha] :
+    ppm < 1000 ? [255,255,191, alpha] :
+      ppm < 1200 ? [253,174,97, alpha] :
+        [215, 25, 28, alpha];
 }
 
 //-----------------------------------------------------------------------------

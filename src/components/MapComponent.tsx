@@ -108,7 +108,7 @@ export default function MapComponent(props: { mapStyle: string }) {
     getLineWidth: 1,
     lineWidthUnits: 'pixels',
     radiusUnits: 'pixels',
-    getRadius: 10,
+    getRadius: 8,
     pickable: true
   });
 

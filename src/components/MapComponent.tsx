@@ -102,7 +102,7 @@ export default function MapComponent(props: { mapStyle: string }) {
     id: 'scatterplot-layer',
     data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
     dataTransform: dataTransform2,
-    getFillColor: d => ppmColor(d.co2Avg, .75),
+    getFillColor: d => ppmColor(d.co2Avg, .825),
     stroked: true,
     getLineColor: [0,0,0, 255],
     getLineWidth: 1,

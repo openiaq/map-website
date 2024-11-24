@@ -1,41 +1,27 @@
 import { useState } from 'react';
 import MapComponent, { mapStyles } from "./components/MapComponent";
 //import { DarkModeSwitch } from 'react-toggle-dark-mode';
-import PopupMenu from './components/PopupMenu';
+import SlideInMenu from './components/SlideInMenu';
 import { MapIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 
 function App() {
   const [mapStyle, setMapSstyle] = useState("");
 
-  const menuItems2 = Object.keys(mapStyles).map(styleName => {
+  const menuItems = Object.keys(mapStyles).map(styleName => {
     return {
       label: styleName,
       onClick: () => { setMapSstyle(styleName) }
     }
   });
 
-  const menuItems = [
-    {
-      label: "A",
-      onClick: () => { console.log("A") }
-    },
-    {
-      label: "B",
-      onClick: () => { console.log("B") }
-    },
-    {
-      label: "C",
-      onClick: () => { console.log("C") }
-    },
-  ]
   return (
     <div className="">
       <main className="">
         <div className="w-screen h-screen">
           <MapComponent mapStyle={mapStyle} />
-          <PopupMenu
-            menuItems={menuItems2}
+          <SlideInMenu
+            menuItems={menuItems}
             openIcon={<MapIcon className='h-6 w-6' />}
             closeIcon={<XMarkIcon className='h-6 w-6' />}
             position='right'

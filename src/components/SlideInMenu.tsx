@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 type Position = "left" | "right";
 
-type PopupMenuProps = {
+type SlideInMenuProps = {
   openIcon: React.ReactNode; // Icon to display when the menu is open
   closeIcon: React.ReactNode; // Icon to display when the menu is closed
   menuItems: { label: string; onClick: () => void }[]; // Menu items with callbacks
@@ -10,7 +10,7 @@ type PopupMenuProps = {
   topOffset?: string; // Custom vertical position (CSS value, e.g., "4rem" or "50%")
 };
 
-const PopupMenu: React.FC<PopupMenuProps> = ({
+const SlideInMenu: React.FC<SlideInMenuProps> = ({
   openIcon,
   closeIcon,
   menuItems,
@@ -79,4 +79,4 @@ const PopupMenu: React.FC<PopupMenuProps> = ({
   );
 };
 
-export default PopupMenu;
+export default SlideInMenu;

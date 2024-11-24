@@ -97,7 +97,7 @@ function dataTransform2(data: unknown) {
   const expandedData = Object.values(venues).flatMap((measurements) => {
     const { longitude, latitude, name, co2readingsAvg } = measurements[0];
     const points = Array.from({ length: 20 }, () => {
-      const [newLon, newLat] = randomPointAround(latitude, longitude, 100);
+      const [newLon, newLat] = randomPointAround(latitude, longitude, 1000);
       return {
         position: [newLon, newLat],
         name: `${name} (Randomized)`,
@@ -162,9 +162,9 @@ export default function MapComponent(props: { mapStyle: string }) {
     id: 'scatterplot-layer',
     data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
     dataTransform: dataTransform2,
-    getFillColor: d => ppmColor(d.co2Avg, .70),
+    getFillColor: d => ppmColor(d.co2Avg, .75),
     stroked: true,
-    getLineColor: [253,174,97, 255],
+    getLineColor: [255,255,255, 255],
     getLineWidth: 1,
     lineWidthUnits: 'pixels',
     radiusUnits: 'pixels',

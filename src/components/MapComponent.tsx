@@ -30,12 +30,13 @@ export const mapStyles: { [key: string]: string } = {
 //-----------------------------------------------------------------------------
 // Re-organize data from https://indoorco2map.com/chartdata/IndoorCO2MapData.json
 // to aggregate measurements from the same venues
-function dataTransform2(data: unknown) {
+function dataTransform(data: unknown) {
   if (!Array.isArray(data)) {
     return [] as any;
   }
   type Measurement = {
     nwrID: string, // Unique venue ID
+    osmKey: string, // e.g. shop,amenity,other,tourism,healthcare,leisure
     [key: string]: unknown,
   };
   const arrayData: Measurement[] = data;
@@ -43,15 +44,20 @@ function dataTransform2(data: unknown) {
   let venues: {
     [venueId: string]: Measurement[];
   } = {};
-  arrayData.map(item => {
+  let osmKeys: Set<string> = new Set<string>();
+  arrayData.map((item, idx) => {
     const venueMeasurements = venues[item.nwrID] = venues[item.nwrID] || [];
+    // if (idx === 1) console.log(">>> " + JSON.stringify(item));
     venueMeasurements.push(item);
+    osmKeys.add(item.osmKey);
   });
   // console.log(`>>>>> nVenues=${Object.keys(venues).length}`);
+  // console.log(`>>>>> osmKeys=${Array.from(osmKeys)}`);
   return Object.values(venues).map(measurements => {
     return {
       position: [measurements[0].longitude, measurements[0].latitude],
       name: measurements[0].name,
+      osmKey: measurements[0].osmKey,
       co2Avg: measurements[0].co2readingsAvg, // TODO: reduce() for avg of avgs
       allMeasurements: measurements
     }
@@ -98,7 +104,7 @@ export default function MapComponent(props: { mapStyle: string }) {
   const scatterPlotLayer = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
-    dataTransform: dataTransform2,
+    dataTransform: dataTransform,
     getFillColor: d => ppmColor(d.co2Avg, .20),
     stroked: true,
     getLineColor: d => ppmColor(d.co2Avg, .50),
@@ -126,7 +132,7 @@ export default function MapComponent(props: { mapStyle: string }) {
         //  mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
         //mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
         mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
-        //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+      //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       />
     </DeckGL>
   );

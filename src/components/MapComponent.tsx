@@ -1,11 +1,9 @@
 //import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import { MapController, MapView } from '@deck.gl/core';
-import { GeoBoundingBox, TileLayer } from '@deck.gl/geo-layers';
-import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { MapView } from '@deck.gl/core';
+import { ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl/maplibre';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
 
 
 //const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -30,96 +28,86 @@ export const mapStyles: { [key: string]: string } = {
 //-----------------------------------------------------------------------------
 // Re-organize data from https://indoorco2map.com/chartdata/IndoorCO2MapData.json
 // to aggregate measurements from the same venues
-function dataTransform(data: unknown) {
-  if (!Array.isArray(data)) {
-    return [] as any;
-  }
-  type Measurement = {
-    nwrID: string, // Unique venue ID
-    osmKey: string, // e.g. shop,amenity,other,tourism,healthcare,leisure
-    [key: string]: unknown,
-  };
-  const arrayData: Measurement[] = data;
-  // Aggregate measurements from the same venue
-  let venues: {
-    [venueId: string]: Measurement[];
-  } = {};
-  let osmKeys: Set<string> = new Set<string>();
-  arrayData.map((item, idx) => {
-    const venueMeasurements = venues[item.nwrID] = venues[item.nwrID] || [];
-    // if (idx === 1) console.log(">>> " + JSON.stringify(item));
-    venueMeasurements.push(item);
-    osmKeys.add(item.osmKey);
-  });
-  // console.log(`>>>>> nVenues=${Object.keys(venues).length}`);
-  // console.log(`>>>>> osmKeys=${Array.from(osmKeys)}`);
-  return Object.values(venues).map(measurements => {
-    return {
-      position: [measurements[0].longitude, measurements[0].latitude],
-      name: measurements[0].name,
-      osmKey: measurements[0].osmKey,
-      co2Avg: measurements[0].co2readingsAvg, // TODO: reduce() for avg of avgs
-      allMeasurements: measurements
+function filteredDataTransform(osmKeyRegEx: RegExp) {
+  return (data: unknown) => {
+    if (!Array.isArray(data)) {
+      return [] as any;
     }
-  });
+    type Measurement = {
+      nwrID: string, // Unique venue ID
+      osmKey: string, // e.g. shop,amenity,other,tourism,healthcare,leisure
+      [key: string]: unknown,
+    };
+    const arrayData: Measurement[] = data;
+    // Aggregate measurements from the same venue
+    let venues: {
+      [venueId: string]: Measurement[];
+    } = {};
+    // let osmKeys: Set<string> = new Set<string>();
+    arrayData.map(item => {
+      const venueMeasurements = venues[item.nwrID] = venues[item.nwrID] || [];
+      // if (index === 1) console.log(">>> " + JSON.stringify(item));
+      venueMeasurements.push(item);
+      // osmKeys.add(item.osmKey);
+    });
+    // console.log(`>>>>> nVenues=${Object.keys(venues).length}`);
+    // console.log(`>>>>> osmKeys=${Array.from(osmKeys)}`);
+    return Object.values(venues).map(measurements => {
+      return {
+        position: [measurements[0].longitude, measurements[0].latitude],
+        name: measurements[0].name,
+        osmKey: measurements[0].osmKey,
+        co2Avg: measurements[0].co2readingsAvg, // TODO: reduce() for avg of avgs
+        allMeasurements: measurements
+      }
+    })
+      .filter(d => osmKeyRegEx.test(d.osmKey));
+  }
 }
 
 
 function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, number, number] {
   const alpha = Math.round(255 * alphaFraction);
-  return ppm < 600 ? [44,123,182, alpha] :
-  ppm < 800 ? [171,217,233, alpha] :
-    ppm < 1000 ? [255,255,191, alpha] :
-      ppm < 1200 ? [253,174,97, alpha] :
-        [215, 25, 28, alpha];
+  return ppm < 600 ? [44, 123, 182, alpha] :
+    ppm < 800 ? [171, 217, 233, alpha] :
+      ppm < 1000 ? [255, 255, 191, alpha] :
+        ppm < 1200 ? [253, 174, 97, alpha] :
+          [215, 25, 28, alpha];
 }
 
-//-----------------------------------------------------------------------------
-export default function MapComponent(props: { mapStyle: string }) {
-  /*
-   To use OSM, remove <Map> component below and use this as first element
-   of the DeckGL layers prop
-  */
-  const osmTileLayer = new TileLayer<ImageBitmap>({
-    // https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
-    data: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-    // Since these OSM tiles support HTTP/2, we can make many concurrent requests
-    // and we aren't limited by the browser to a certain number per domain.
-    maxRequests: 20,
-    pickable: true,
-    minZoom: 0,
-    maxZoom: 19,
-    tileSize: 256,
-    zoomOffset: devicePixelRatio === 1 ? -1 : 0,
-    renderSubLayers: (props: any) => {
-      const { west, north, east, south } = props.tile.bbox as GeoBoundingBox;
-      return [
-        new BitmapLayer(props, {
-          data: undefined,
-          image: props.data,
-          bounds: [west, south, east, north]
-        }),
-      ];
-    },
-  });
 
-  const scatterPlotLayer = new ScatterplotLayer({
-    id: 'scatterplot-layer',
-    data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
-    dataTransform: dataTransform,
-    getFillColor: d => ppmColor(d.co2Avg, .75),
-    stroked: true,
-    getLineColor: [0,0,0, 255],
-    getLineWidth: 1,
-    lineWidthUnits: 'pixels',
-    radiusUnits: 'pixels',
-    getRadius: 7,
-    pickable: true
+// Layer name mapped to rexexp for testing osmKey
+const layerSpecs = {
+  shops: /shop/,
+  amenities: /amenity/,
+  other: /^(?!shop$|amenity$).+$/ // Anything except shop or amenity
+};
+export const LAYER_NAMES = Object.keys(layerSpecs);
+
+
+//-----------------------------------------------------------------------------
+export default function MapComponent(props: { mapStyle: string, selectedLayerNames?: string[] }) {
+
+  let layers = Object.entries(layerSpecs).map(([name, regEx]) => {
+    return new ScatterplotLayer({
+      id: name,
+      data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
+      dataTransform: filteredDataTransform(regEx),
+      getFillColor: d => ppmColor(d.co2Avg, .75),
+      getLineColor: [0, 0, 0, 255],
+      stroked: true,
+      getLineWidth: 1,
+      lineWidthUnits: 'pixels',
+      radiusUnits: 'pixels',
+      getRadius: 7,
+      pickable: true,
+      visible: props.selectedLayerNames?.includes(name)
+    });
   });
 
   return (
     <DeckGL
-      layers={[scatterPlotLayer]}
+      layers={layers}
       views={new MapView()}
       initialViewState={{
         longitude: 0.45,
@@ -130,16 +118,16 @@ export default function MapComponent(props: { mapStyle: string }) {
         scrollZoom: true,      // Allow zooming with the scroll wheel
         dragPan: true,         // Allow panning (XY movement)
         dragRotate: false,     // Disable map rotation
-        touchRotate: false     // ...disable touch-based rotation
+        touchRotate: false     // Disable touch-based rotation
       }}
       getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
 
     >
       <Map
-        //  mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
-        //mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
+        // mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
+        // mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
         mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
-      //mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+      // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
       />
     </DeckGL>
   );

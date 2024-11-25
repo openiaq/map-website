@@ -1,32 +1,32 @@
 import { useState } from 'react';
-import MapComponent, { mapStyles } from "./components/MapComponent";
+import MapComponent, { LAYER_NAMES, mapStyles } from "./components/MapComponent";
 //import { DarkModeSwitch } from 'react-toggle-dark-mode';
+import ToggleSwitch from './components/ToggleSwitch';
 import SlideInMenu from './components/SlideInMenu';
-
-import { MapIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
 import { IoMapSharp, IoCloseOutline } from "react-icons/io5";
 import { IoRestaurantSharp, IoRestaurantOutline } from "react-icons/io5";
 import { IoPricetagsSharp, IoPricetagsOutline } from "react-icons/io5";
 import { IoCart, IoCartOutline } from "react-icons/io5";
 
 
+export default function App() {
+  const [mapStyle, setMapStyle] = useState("");
+  const [layerNames, setLayerNames] = useState<string[]>(LAYER_NAMES);
 
-import ToggleSwitch from './components/ToggleSwitch';
-
-
-
-function App() {
-  const [mapStyle, setMapSstyle] = useState("");
-
-  const handleToggle = (state: boolean) => {
-    console.log(`Toggle state: ${state ? "On" : "Off"}`);
+  const handleToggle = (newState: boolean, layerName: string) => {
+    // setLayerNames must return new Array, or state change will be ignored
+    if (newState) {
+      setLayerNames(previous => [...previous, layerName]);
+    }
+    else {
+      setLayerNames(previous => previous.filter(n => n !== layerName));
+    }
   };
 
   const menuItems = Object.keys(mapStyles).map(styleName => {
     return {
       label: styleName,
-      onClick: () => { setMapSstyle(styleName) }
+      onClick: () => { setMapStyle(styleName) }
     }
   });
 
@@ -34,7 +34,10 @@ function App() {
     <div className="">
       <main className="">
         <div className="w-screen h-screen">
-          <MapComponent mapStyle={mapStyle} />
+          <MapComponent
+            mapStyle={mapStyle}
+            selectedLayerNames={layerNames}
+          />
           <SlideInMenu
             menuItems={menuItems}
             openIcon={<IoMapSharp className='h-6 w-12' />}
@@ -54,21 +57,21 @@ function App() {
           <div className="h-screen flex items-center justify-center bg-gray-100">
             <ToggleSwitch
               initialState={true}
-              onToggle={handleToggle}
+              onToggle={newState => handleToggle(newState, LAYER_NAMES[0])}
               onIcon={<IoCart className="w-6 h-8 text-gray-700" />}
               offIcon={<IoCartOutline className="w-6 h-8 text-gray-700" />}
               topOffset='4rem'
             />
             <ToggleSwitch
               initialState={true}
-              onToggle={handleToggle}
+              onToggle={newState => handleToggle(newState, LAYER_NAMES[1])}
               onIcon={<IoRestaurantSharp className="w-6 h-8 text-gray-700" />}
               offIcon={<IoRestaurantOutline className="w-6 h-8 text-gray-700" />}
               topOffset='7rem'
             />
             <ToggleSwitch
               initialState={true}
-              onToggle={handleToggle}
+              onToggle={newState => handleToggle(newState, LAYER_NAMES[2])}
               onIcon={<IoPricetagsSharp className="w-6 h-8 text-gray-700" />}
               offIcon={<IoPricetagsOutline className="w-6 h-8 text-gray-700" />}
               topOffset='10rem'
@@ -83,5 +86,3 @@ function App() {
     </div>
   )
 }
-
-export default App

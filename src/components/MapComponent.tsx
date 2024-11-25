@@ -1,6 +1,6 @@
 //import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import { MapView } from '@deck.gl/core';
+import { MapController, MapView } from '@deck.gl/core';
 import { GeoBoundingBox, TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl/maplibre';
@@ -64,12 +64,14 @@ function dataTransform(data: unknown) {
   });
 }
 
+
 function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, number, number] {
   const alpha = Math.round(255 * alphaFraction);
-  return ppm < 600 ? [0, 0, 255, alpha] :
-    ppm < 1000 ? [255, 255, 0, alpha] :
-      ppm < 1200 ? [255, 165, 0, alpha] :
-        [255, 0, 0, alpha];
+  return ppm < 600 ? [44,123,182, alpha] :
+  ppm < 800 ? [171,217,233, alpha] :
+    ppm < 1000 ? [255,255,191, alpha] :
+      ppm < 1200 ? [253,174,97, alpha] :
+        [215, 25, 28, alpha];
 }
 
 //-----------------------------------------------------------------------------
@@ -105,13 +107,13 @@ export default function MapComponent(props: { mapStyle: string }) {
     id: 'scatterplot-layer',
     data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
     dataTransform: dataTransform,
-    getFillColor: d => ppmColor(d.co2Avg, .20),
+    getFillColor: d => ppmColor(d.co2Avg, .75),
     stroked: true,
-    getLineColor: d => ppmColor(d.co2Avg, .50),
+    getLineColor: [0,0,0, 255],
     getLineWidth: 1,
     lineWidthUnits: 'pixels',
     radiusUnits: 'pixels',
-    getRadius: 10,
+    getRadius: 7,
     pickable: true
   });
 
@@ -124,7 +126,12 @@ export default function MapComponent(props: { mapStyle: string }) {
         latitude: 51.47,
         zoom: 5
       }}
-      controller={true}
+      controller={{
+        scrollZoom: true,      // Allow zooming with the scroll wheel
+        dragPan: true,         // Allow panning (XY movement)
+        dragRotate: false,     // Disable map rotation
+        touchRotate: false     // ...disable touch-based rotation
+      }}
       getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
 
     >

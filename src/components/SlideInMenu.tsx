@@ -31,7 +31,7 @@ const SlideInMenu: React.FC<SlideInMenuProps> = ({
         className={`fixed z-50 p-2 rounded-md bg-gray-800 bg-opacity-60 text-white focus:outline-none`}
         style={{
           top: topOffset, // Dynamic vertical positioning
-          [position]: "1rem", // Position on the left or right
+          [position]: isOpen ? "0rem" : "1rem", // Position on the left or right
         }}
         aria-label="Toggle Menu"
       >

@@ -66,14 +66,15 @@ function filteredDataTransform(osmKeyRegEx: RegExp) {
 }
 
 
-function ppmColor(ppm: number, alphaFraction: number = 1.0): [number, number, number, number] {
+function ppmColor(
+  colorFromValueFunction: (value: number) => [number, number, number],
+  ppm: number,
+  alphaFraction: number = 1.0
+): [number, number, number, number] {
   const alpha = Math.round(255 * alphaFraction);
-  return ppm < 600 ? [44, 123, 182, alpha] :
-    ppm < 800 ? [171, 217, 233, alpha] :
-      ppm < 1000 ? [255, 255, 191, alpha] :
-        ppm < 1200 ? [253, 174, 97, alpha] :
-          [215, 25, 28, alpha];
-}
+  const rgbArray = colorFromValueFunction(ppm);
+  return [...rgbArray, alpha];
+};
 
 
 // Layer name mapped to rexexp for testing osmKey
@@ -86,14 +87,18 @@ export const LAYER_NAMES = Object.keys(layerSpecs);
 
 
 //-----------------------------------------------------------------------------
-export default function MapComponent(props: { mapStyle: string, selectedLayerNames?: string[] }) {
+export default function MapComponent(props: {
+  mapStyle: string,
+  colorFromValueFunction: (v: number) => [number, number, number]; // rgb
+  selectedLayerNames?: string[],
+}) {
 
   let layers = Object.entries(layerSpecs).map(([name, regEx]) => {
     return new ScatterplotLayer({
       id: name,
       data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
       dataTransform: filteredDataTransform(regEx),
-      getFillColor: d => ppmColor(d.co2Avg, .75),
+      getFillColor: d => ppmColor(props.colorFromValueFunction, d.co2Avg, .75),
       getLineColor: [0, 0, 0, 255],
       stroked: true,
       getLineWidth: 1,

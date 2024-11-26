@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MapComponent, { LAYER_NAMES, mapStyles } from "./components/MapComponent";
+import ColorLegend, { ColorFromValueFunction, defaultColorFromValueFunction, colorBlindColorFromValueFunction } from './components/ColorLegend';
 //import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import ToggleSwitch from './components/ToggleSwitch';
 import SlideInMenu from './components/SlideInMenu';
@@ -12,6 +13,7 @@ import { IoCart, IoCartOutline } from "react-icons/io5";
 export default function App() {
   const [mapStyle, setMapStyle] = useState("");
   const [layerNames, setLayerNames] = useState<string[]>(LAYER_NAMES);
+  const [colorFromValueFunction, setColorFromValueFunction] = useState<ColorFromValueFunction>(() => defaultColorFromValueFunction)
 
   const handleToggle = (newState: boolean, layerName: string) => {
     // setLayerNames must return new Array, or state change will be ignored
@@ -37,6 +39,7 @@ export default function App() {
           <MapComponent
             mapStyle={mapStyle}
             selectedLayerNames={layerNames}
+            colorFromValueFunction={colorFromValueFunction}
           />
           <SlideInMenu
             menuItems={menuItems}
@@ -80,8 +83,12 @@ export default function App() {
               topOffset='10rem'
             />
 
+            <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-1 p-1 rounded-md">
+              <ColorLegend
+                onSchemeSelection={colorFromValueFunction => setColorFromValueFunction(() => colorFromValueFunction)}
+              />
+            </div>
           </div>
-
         </div>
       </main>
       <footer className="">

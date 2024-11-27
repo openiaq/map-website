@@ -13,7 +13,8 @@ import { IoEye, IoEyeOutline } from "react-icons/io5";
 
 // Color schemes from https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=5
 type ColorScheme = [number, number, number][];
-const conventionalScheme: ColorScheme = [[26, 150, 65], [166, 217, 106], [255, 255, 191], [253, 174, 97], [215, 25, 28]];
+//const conventionalScheme: ColorScheme = [[26, 150, 65], [166, 217, 106], [255, 255, 191], [253, 174, 97], [215, 25, 28]];
+const conventionalScheme: ColorScheme = [[0, 127, 78], [114, 176, 67], [248, 204, 27], [243, 115, 36], [225, 39, 41]];
 const colorBlindScheme: ColorScheme = [[44, 123, 182], [171, 217, 233], [255, 255, 191], [253, 174, 97], [215, 25, 28]];
 
 const THRESHHOLDS = [600, 800, 1000, 1200]; // Must be sorted. TODO: Pass in as a prop?

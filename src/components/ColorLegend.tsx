@@ -52,7 +52,7 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
         offIcon={<IoEyeOutline className="w-4 h-6 text-gray-700" />}
         onIcon={<IoEye className="w-4 h-6 text-gray-700" />}
         size={4}
-        className="absolute -top-6"
+        className="absolute -top-0 -right-0"
       />
       <div className="bg-gray-800 bg-opacity-60 p-2 rounded shadow-md">
         {/*<h3 className="text-sm font-bold mb-1">CO2 PPM</h3>*/}

@@ -45,7 +45,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       }
       <button
         onClick={handleToggle}
-        className={`fixed flex items-center ${position}-4 w-${size * 2} py-1 rounded-full focus:outline-none transition
+        className={`flex items-center ${position}-4 w-${size * 2} py-1 rounded-full focus:outline-none transition
           ${isOn ? "bg-gray-800 bg-opacity-60" : "bg-gray-800 bg-opacity-60" // no difference for now
           }`}
       >

@@ -1,9 +1,11 @@
 //import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import { MapView } from '@deck.gl/core';
+//import { MapView } from '@deck.gl/core';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl/maplibre';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import ColorLegend, { colorFromValue } from './ColorLegend';
+import { useState } from 'react';
 
 
 //const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -66,17 +68,6 @@ function filteredDataTransform(osmKeyRegEx: RegExp) {
 }
 
 
-function ppmColor(
-  colorFromValueFunction: (value: number) => [number, number, number],
-  ppm: number,
-  alphaFraction: number = 1.0
-): [number, number, number, number] {
-  const alpha = Math.round(255 * alphaFraction);
-  const rgbArray = colorFromValueFunction(ppm);
-  return [...rgbArray, alpha];
-};
-
-
 // Layer name mapped to rexexp for testing osmKey
 const layerSpecs = {
   shops: /shop/,
@@ -89,16 +80,17 @@ export const LAYER_NAMES = Object.keys(layerSpecs);
 //-----------------------------------------------------------------------------
 export default function MapComponent(props: {
   mapStyle: string,
-  colorFromValueFunction: (v: number) => [number, number, number]; // rgb
   selectedLayerNames?: string[],
 }) {
+
+  const [isColorBlind, setIsColorBlind] = useState(false);
 
   let layers = Object.entries(layerSpecs).map(([name, regEx]) => {
     return new ScatterplotLayer({
       id: name,
       data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
       dataTransform: filteredDataTransform(regEx),
-      getFillColor: d => ppmColor(props.colorFromValueFunction, d.co2Avg, .75),
+      getFillColor: d => [...colorFromValue(d.co2Avg, isColorBlind), (.75 * 255)],
       getLineColor: [0, 0, 0, 255],
       stroked: true,
       getLineWidth: 1,
@@ -110,30 +102,40 @@ export default function MapComponent(props: {
     });
   });
 
-  return (
-    <DeckGL
-      layers={layers}
-      views={new MapView()}
-      initialViewState={{
-        longitude: 0.45,
-        latitude: 51.47,
-        zoom: 5
-      }}
-      controller={{
-        scrollZoom: true,      // Allow zooming with the scroll wheel
-        dragPan: true,         // Allow panning (XY movement)
-        dragRotate: false,     // Disable map rotation
-        touchRotate: false     // Disable touch-based rotation
-      }}
-      getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
 
-    >
-      <Map
-        // mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
-        // mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
-        mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
-      // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-      />
-    </DeckGL>
+  return (
+    <div>
+      <DeckGL
+        key={isColorBlind ? 'colorBlind' : 'default'} // To force re-render
+        layers={layers}
+        //views={new MapView()}
+        initialViewState={{
+          longitude: 0.45,
+          latitude: 51.47,
+          zoom: 5
+        }}
+        controller={{
+          scrollZoom: true,      // Allow zooming with the scroll wheel
+          dragPan: true,         // Allow panning (XY movement)
+          dragRotate: false,     // Disable map rotation
+          touchRotate: false     // Disable touch-based rotation
+        }}
+        getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
+
+      >
+        <Map
+          // mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
+          // mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
+          mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
+        // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        />
+      </DeckGL>
+
+      <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-1 p-1 rounded-md">
+        <ColorLegend
+          onSchemeSelection={newIsColorBlind => setIsColorBlind(newIsColorBlind)}
+        />
+      </div>
+    </div>
   );
 }

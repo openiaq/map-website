@@ -43,7 +43,6 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           </span>
         )
       }
-
       <button
         onClick={handleToggle}
         className={`fixed flex items-center ${position}-4 w-${size * 2} py-1 rounded-full focus:outline-none transition

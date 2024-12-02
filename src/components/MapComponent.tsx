@@ -98,7 +98,10 @@ export default function MapComponent(props: {
       radiusUnits: 'pixels',
       getRadius: 7,
       pickable: true,
-      visible: props.selectedLayerNames?.includes(name)
+      visible: props.selectedLayerNames?.includes(name),
+      updateTriggers: {
+        getFillColor: [isColorBlind]
+      }
     });
   });
 
@@ -106,7 +109,7 @@ export default function MapComponent(props: {
   return (
     <div>
       <DeckGL
-        key={isColorBlind ? 'colorBlind' : 'default'} // To force re-render
+        // key={isColorBlind ? 'colorBlind' : 'default'} // To force re-render
         layers={layers}
         //views={new MapView()}
         initialViewState={{

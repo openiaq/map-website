@@ -8,7 +8,8 @@ type ToggleSwitchProps = {
   onIcon: React.ReactNode; // Icon for the "on" state
   offIcon: React.ReactNode; // Icon for the "off" state
   position?: Position; // Position of the button: "left" or "right"
-  topOffset?: string; // Vertical position offset (e.g., "1rem", "50%")
+  size?: number;
+  className?: string; // TailwindCSS styles
   hoverText?: string; // Text to display on hover
 };
 
@@ -18,7 +19,8 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   onIcon,
   offIcon,
   position = "right",
-  topOffset = "1rem",
+  size = 8,
+  className = "",
   hoverText = "",
 }) => {
   const [isOn, setIsOn] = useState(initialState);
@@ -31,15 +33,11 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   };
 
   return (
-    <div>
+    <div className={`${className}`}>
       {
         hoverText && isHovered && (
           <span
-            className={`fixed ${position}-20 m-3 flex bg-gray-700 bg-opacity-40 text-white text-sm rounded px-2 shadow`}
-            style={{
-              top: topOffset,
-              // [position]: "",
-            }}
+            className={`fixed ${position}-${size * 2} m-${size / 2} flex bg-gray-700 bg-opacity-40 text-white text-sm rounded px-2 shadow`}
           >
             {hoverText}
           </span>
@@ -48,20 +46,15 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
 
       <button
         onClick={handleToggle}
-        className={`fixed flex items-center ${position}-4 w-16 px-1 py-1 rounded-full focus:outline-none transition
+        className={`fixed flex items-center ${position}-4 w-${size * 2} py-1 rounded-full focus:outline-none transition
           ${isOn ? "bg-gray-800 bg-opacity-60" : "bg-gray-800 bg-opacity-60" // no difference for now
           }`}
-        style={{
-          top: topOffset,
-          //[position]: "1rem",
-        }}
       >
         <span
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`flex items-center justify-center w-8 h-8 rounded-full shadow transform transition
-            ${isOn ? "translate-x-7 bg-white" : "translate-x-0 bg-gray-300"
-            }`}
+          className={`flex items-center justify-center w-${size} h-${size} rounded-full shadow transform transition
+            ${isOn ? "bg-white translate-x-full" : "bg-gray-300 translate-x-0"}`}
         >
           {isOn ? onIcon : offIcon}
         </span>

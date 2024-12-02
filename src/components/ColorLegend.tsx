@@ -46,19 +46,20 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
   const [isDefault, setIsDefault] = useState(true);
 
   return (
-    <>
+    <div className="absolute bottom-4 right-4">
       <ToggleSwitch
-        initialState={true}
+        initialState={false}
         hoverText="Colorblind"
         onToggle={newState => {
           setIsDefault(newState);
-          onSchemeSelection(newState ? defaultColorFromValueFunction : colorBlindColorFromValueFunction);
+          onSchemeSelection(newState ? colorBlindColorFromValueFunction : defaultColorFromValueFunction);
         }}
-        offIcon={<IoEyeOutline className="w-6 h-8 text-gray-700" />}
-        onIcon={<IoEye className="w-6 h-8 text-gray-700" />}
-        topOffset="16rem"
+        offIcon={<IoEyeOutline className="w-4 h-6 text-gray-700" />}
+        onIcon={<IoEye className="w-4 h-6 text-gray-700" />}
+        size={4}
+        className="absolute -top-6"
       />
-      <div className="absolute bottom-4 right-4 bg-gray-800 bg-opacity-60 p-2 rounded shadow-md">
+      <div className="bg-gray-800 bg-opacity-60 p-2 rounded shadow-md">
         {/*<h3 className="text-sm font-bold mb-1">CO2 PPM</h3>*/}
         <div className="grid gap-1 items-center">
           {[0, ...thresholds].map((threshold, index) => {
@@ -85,7 +86,7 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 export default ColorLegend;

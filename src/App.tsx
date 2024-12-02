@@ -57,14 +57,14 @@ export default function App() {
           />
           */}
 
-          <div className="h-screen flex items-center justify-center bg-gray-100">
+          <div className="h-screen">
             <ToggleSwitch
               initialState={true}
               onToggle={newState => handleToggle(newState, LAYER_NAMES[0])}
               hoverText={LAYER_NAMES[0].charAt(0).toUpperCase() + LAYER_NAMES[0].slice(1).toLowerCase()}
               onIcon={<IoCart className="w-6 h-8 text-gray-700" />}
               offIcon={<IoCartOutline className="w-6 h-8 text-gray-700" />}
-              topOffset='4rem'
+              className="fixed right-4 top-20"
             />
             <ToggleSwitch
               initialState={true}
@@ -72,7 +72,7 @@ export default function App() {
               hoverText={LAYER_NAMES[1].charAt(0).toUpperCase() + LAYER_NAMES[1].slice(1).toLowerCase()}
               onIcon={<IoRestaurantSharp className="w-6 h-8 text-gray-700" />}
               offIcon={<IoRestaurantOutline className="w-6 h-8 text-gray-700" />}
-              topOffset='7rem'
+              className="fixed right-4 top-32"
             />
             <ToggleSwitch
               initialState={true}
@@ -80,7 +80,7 @@ export default function App() {
               hoverText={LAYER_NAMES[2].charAt(0).toUpperCase() + LAYER_NAMES[2].slice(1).toLowerCase()}
               onIcon={<IoPricetagsSharp className="w-6 h-8 text-gray-700" />}
               offIcon={<IoPricetagsOutline className="w-6 h-8 text-gray-700" />}
-              topOffset='10rem'
+              className="fixed right-4 top-44"
             />
 
             <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-1 p-1 rounded-md">

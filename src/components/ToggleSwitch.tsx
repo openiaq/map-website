@@ -31,15 +31,29 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div>
+      {
+        hoverText && isHovered && (
+          <span
+            className={`fixed ${position}-20 m-3 flex bg-gray-700 bg-opacity-40 text-white text-sm rounded px-2 shadow`}
+            style={{
+              top: topOffset,
+              // [position]: "",
+            }}
+          >
+            {hoverText}
+          </span>
+        )
+      }
+
       <button
         onClick={handleToggle}
-        className={`fixed flex items-center w-16 px-1 py-1 rounded-full focus:outline-none transition
+        className={`fixed flex items-center ${position}-4 w-16 px-1 py-1 rounded-full focus:outline-none transition
           ${isOn ? "bg-gray-800 bg-opacity-60" : "bg-gray-800 bg-opacity-60" // no difference for now
           }`}
         style={{
           top: topOffset,
-          [position]: "1rem",
+          //[position]: "1rem",
         }}
       >
         <span
@@ -51,17 +65,11 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         >
           {isOn ? onIcon : offIcon}
         </span>
-
-        {hoverText && isHovered && (
-          <span
-            className={`absolute top-2 ${position}-16 bg-gray-700 bg-opacity-40 text-white text-sm rounded px-1 py-0.5 shadow inline`}
-          >
-            {hoverText}
-          </span>
-        )}
       </button >
-
     </div>
+
+
+
   );
 };
 

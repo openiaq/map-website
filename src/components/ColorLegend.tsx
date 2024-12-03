@@ -49,8 +49,8 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
           setIsColorBlind(newState);
           onSchemeSelection(newState);
         }}
-        offIcon={<IoEyeOutline className="w-4 h-6 text-gray-700" />}
-        onIcon={<IoEye className="w-4 h-6 text-gray-700" />}
+        offIcon={<IoEyeOutline className="w-4 h-4 text-gray-700" />}
+        onIcon={<IoEye className="w-4 h-4 text-gray-700" />}
         size={4}
         className="absolute -top-0 -right-0"
       />

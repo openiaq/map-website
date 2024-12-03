@@ -33,31 +33,33 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   };
 
   return (
-    <div className={`${className}`}>
-      {
-        hoverText && isHovered && (
-          <span
-            className={`fixed ${position}-${size * 2} m-${size / 2} flex bg-gray-700 bg-opacity-40 text-white text-sm rounded px-2 shadow`}
-          >
-            {hoverText}
-          </span>
-        )
-      }
+    <div className={`flex ${className}`}>
+
       <button
         onClick={handleToggle}
-        className={`flex items-center ${position}-4 w-${size * 2} py-1 rounded-full focus:outline-none transition
-          ${isOn ? "bg-gray-800 bg-opacity-60" : "bg-gray-800 bg-opacity-60" // no difference for now
-          }`}
+        // Workaround bug for (size * 2) not working in tailwind
+        className={`${size == 4 ? "w-8" : "w-16"} ${position}-4 py-1 rounded-full bg-gray-800 bg-opacity-60 `}
       >
         <span
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`flex items-center justify-center w-${size} h-${size} rounded-full shadow transform transition
+          className={`flex w-${size} h-${size} rounded-full shadow transform transition
             ${isOn ? "bg-white translate-x-full" : "bg-gray-300 translate-x-0"}`}
         >
           {isOn ? onIcon : offIcon}
         </span>
       </button >
+
+      {
+        hoverText && isHovered && (
+          <span
+            className={`fixed right-20 flex bg-gray-700 bg-opacity-40 text-white text-sm rounded px-2 shadow`}
+          >
+            {hoverText}
+          </span>
+        )
+      }
+
     </div>
 
 

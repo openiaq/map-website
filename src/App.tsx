@@ -30,6 +30,7 @@ export default function App() {
     }
   });
 
+  const ICON_STYLE = "w-8 h-8 text-gray-700";
   return (
     <div className="">
       <main className="">
@@ -59,24 +60,24 @@ export default function App() {
               initialState={true}
               onToggle={newState => handleToggle(newState, LAYER_NAMES[0])}
               hoverText={LAYER_NAMES[0].charAt(0).toUpperCase() + LAYER_NAMES[0].slice(1).toLowerCase()}
-              onIcon={<IoCart className="w-6 h-8 text-gray-700" />}
-              offIcon={<IoCartOutline className="w-6 h-8 text-gray-700" />}
+              onIcon={<IoCart className={ICON_STYLE} />}
+              offIcon={<IoCartOutline className={ICON_STYLE} />}
               className="fixed right-4 top-20"
             />
             <ToggleSwitch
               initialState={true}
               onToggle={newState => handleToggle(newState, LAYER_NAMES[1])}
               hoverText={LAYER_NAMES[1].charAt(0).toUpperCase() + LAYER_NAMES[1].slice(1).toLowerCase()}
-              onIcon={<IoRestaurantSharp className="w-6 h-8 text-gray-700" />}
-              offIcon={<IoRestaurantOutline className="w-6 h-8 text-gray-700" />}
+              onIcon={<IoRestaurantSharp className={ICON_STYLE} />}
+              offIcon={<IoRestaurantOutline className={ICON_STYLE} />}
               className="fixed right-4 top-32"
             />
             <ToggleSwitch
               initialState={true}
               onToggle={newState => handleToggle(newState, LAYER_NAMES[2])}
               hoverText={LAYER_NAMES[2].charAt(0).toUpperCase() + LAYER_NAMES[2].slice(1).toLowerCase()}
-              onIcon={<IoPricetagsSharp className="w-6 h-8 text-gray-700" />}
-              offIcon={<IoPricetagsOutline className="w-6 h-8 text-gray-700" />}
+              onIcon={<IoPricetagsSharp className={ICON_STYLE} />}
+              offIcon={<IoPricetagsOutline className={ICON_STYLE} />}
               className="fixed right-4 top-44"
             />
 

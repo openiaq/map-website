@@ -30,7 +30,7 @@ export default function App() {
     }
   });
 
-  const ICON_STYLE = "w-8 h-8 text-gray-700";
+  const ICON_STYLE = "w-7 h-7 text-gray-700";
   return (
     <div className="">
       <main className="">

@@ -27,6 +27,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleToggle = () => {
+    setIsHovered(false);
     const newState = !isOn;
     setIsOn(newState);
     onToggle(newState); // Notify parent component
@@ -43,7 +44,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         <span
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`flex w-${size} h-${size} rounded-full shadow transform transition
+          className={`flex items-center justify-center w-${size} h-${size} rounded-full shadow transform transition
             ${isOn ? "bg-white translate-x-full" : "bg-gray-300 translate-x-0"}`}
         >
           {isOn ? onIcon : offIcon}

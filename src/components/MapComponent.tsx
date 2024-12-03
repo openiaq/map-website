@@ -17,7 +17,7 @@ export const mapStyles: { [key: string]: string } = {
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
   */
 
-  CARTO_LIGHT: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json", // No key required
+  CARTO_LIGHT: "https://www.indoorco2map.com/mapstyles/testStyle.json", // No key required
   CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json", // No key required
 
   MAPTILER_LIGHT: `https://api.maptiler.com/maps/streets-v2-light/style.json?key=${MAPTILER_KEY}`,
@@ -25,7 +25,7 @@ export const mapStyles: { [key: string]: string } = {
   MAPTILER_OSM: `https://api.maptiler.com/maps/openstreetmap/style.json?key=${MAPTILER_KEY}`,
 }
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------- 
 // Re-organize data from https://indoorco2map.com/chartdata/IndoorCO2MapData.json
 // to aggregate measurements from the same venues
 function filteredDataTransform(osmKeyRegEx: RegExp) {

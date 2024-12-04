@@ -16,8 +16,8 @@ export const mapStyles: { [key: string]: string } = {
   MAPBOX_DARK: "mapbox://styles/mapbox/dark-v9",
   AIRCODA: "mapbox://styles/pwellner/cld2519en001f01s497tr94se",
   */
-
-  CARTO_LIGHT: "https://www.indoorco2map.com/mapstyles/testStyle.json", // No key required
+  CARTO_LIGHT: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json", // No key required
+  CARTO_TEST: "/testStyle.json", // Based on CARTO_LIGHT, with restaurant circles and text
   CARTO_DARK: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json", // No key required
 
   MAPTILER_LIGHT: `https://api.maptiler.com/maps/streets-v2-light/style.json?key=${MAPTILER_KEY}`,

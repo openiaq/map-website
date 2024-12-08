@@ -50,12 +50,12 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
           setIsColorBlind(newState);
           onSchemeSelection(newState);
         }}
-        offIcon={<IoEyeOutline className="w-4 h-4 text-gray-700" />}
-        onIcon={<IoEye className="w-4 h-4 text-gray-700" />}
+        offIcon={<IoEyeOutline className="w-4 h-4 text-black" />}
+        onIcon={<IoEye className="w-4 h-4 text-black" />}
         size={4}
         className="absolute -top-0 -right-0"
       />
-      <div className="bg-gray-800 bg-opacity-60 p-2 rounded shadow-md">
+      <div className="bg-gray-900 bg-opacity-70 p-2 rounded shadow-md">
         {/*<h3 className="text-sm font-bold mb-1">CO2 PPM</h3>*/}
         <div className="grid gap-1 items-center">
           {[0, ...THRESHHOLDS].map((threshold, index) => {

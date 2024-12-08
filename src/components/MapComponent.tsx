@@ -67,7 +67,6 @@ function filteredDataTransform(osmKeyRegEx: RegExp) {
   }
 }
 
-
 // Layer name mapped to rexexp for testing osmKey
 const layerSpecs = {
   shops: /shop/,
@@ -81,6 +80,7 @@ export const LAYER_NAMES = Object.keys(layerSpecs);
 export default function MapComponent(props: {
   mapStyle: string,
   selectedLayerNames?: string[],
+  onClick?: (o: Record<string, any>) => void,
 }) {
 
   const [isColorBlind, setIsColorBlind] = useState(false);
@@ -101,7 +101,8 @@ export default function MapComponent(props: {
       visible: props.selectedLayerNames?.includes(name),
       updateTriggers: {
         getFillColor: [isColorBlind]
-      }
+      },
+      onClick: o => { props.onClick && props.onClick(o.object); }
     });
   });
 
@@ -130,7 +131,10 @@ export default function MapComponent(props: {
           // mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
           // mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
           mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
-        // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+          // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+          //customAttribution={"&copy; OpenIAQ.org, IndoorCO2Map.com, MapTiler.com, OpenStreetMap contributors"}
+          // customAttribution={["foo", "bar"]} not working dec-8-2024
+          attributionControl={false} // Attributions elsewhere
         />
       </DeckGL>
 

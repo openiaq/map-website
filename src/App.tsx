@@ -7,11 +7,13 @@ import { IoMapSharp, IoCloseOutline } from "react-icons/io5";
 import { IoRestaurantSharp, IoRestaurantOutline } from "react-icons/io5";
 import { IoPricetagsSharp, IoPricetagsOutline } from "react-icons/io5";
 import { IoCart, IoCartOutline } from "react-icons/io5";
+import DetailsPanel from './components/DetailsPanel';
 
 
 export default function App() {
   const [mapStyle, setMapStyle] = useState("");
   const [layerNames, setLayerNames] = useState<string[]>(LAYER_NAMES);
+  const [selectedObject, setSelectedObject] = useState<Record<string, any> | null>(null);
 
   const handleToggle = (newState: boolean, layerName: string) => {
     // setLayerNames must return new Array, or state change will be ignored
@@ -33,11 +35,14 @@ export default function App() {
   const ICON_STYLE = "w-7 h-7 text-gray-700";
   return (
     <div className="">
-      <main className="">
-        <div className="w-screen h-screen">
+      <main className="h-screen">
+        <div className="w-screen">
           <MapComponent
             mapStyle={mapStyle}
             selectedLayerNames={layerNames}
+            onClick={o => {
+              setSelectedObject(o);
+            }}
           />
           <SlideInMenu
             menuItems={menuItems}
@@ -55,7 +60,7 @@ export default function App() {
           />
           */}
 
-          <div className="h-screen">
+          <div className="">
             <ToggleSwitch
               initialState={true}
               onToggle={newState => handleToggle(newState, LAYER_NAMES[0])}
@@ -83,8 +88,19 @@ export default function App() {
 
           </div>
         </div>
+        {!!selectedObject &&
+          <DetailsPanel
+            isOpen={!!selectedObject}
+            onClose={() => setSelectedObject(null)}
+          >
+            <h1 className="text-xl font-bold">{selectedObject?.name ?? "Unnamed"}</h1>
+            <code>{JSON.stringify(selectedObject, null, 4)}</code>
+
+          </DetailsPanel>
+        }
       </main>
       <footer className="">
+        &copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors
       </footer>
     </div>
   )

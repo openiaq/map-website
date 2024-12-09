@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import MapComponent, { LAYER_NAMES, mapStyles } from "./components/MapComponent";
-//import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import ToggleSwitch from './components/ToggleSwitch';
 import SlideInMenu from './components/SlideInMenu';
 import { IoMapSharp, IoCloseOutline } from "react-icons/io5";
@@ -35,58 +34,46 @@ export default function App() {
   const ICON_STYLE = "w-7 h-7 text-gray-700";
   return (
     <div className="">
-      <main className="h-screen">
-        <div className="w-screen">
-          <MapComponent
-            mapStyle={mapStyle}
-            selectedLayerNames={layerNames}
-            onClick={o => {
-              setSelectedObject(o);
-            }}
+      <main className="">
+        <MapComponent
+          mapStyle={mapStyle}
+          selectedLayerNames={layerNames}
+          onClick={o => {
+            setSelectedObject(o);
+          }}
+        />
+        <SlideInMenu
+          menuItems={menuItems}
+          openIcon={<IoMapSharp className='h-6 w-12' />}
+          closeIcon={<IoCloseOutline className='h-6 w-6' />}
+          position='right'
+          topOffset='1rem'
+        />
+        <div className="">
+          <ToggleSwitch
+            initialState={true}
+            onToggle={newState => handleToggle(newState, LAYER_NAMES[0])}
+            hoverText={LAYER_NAMES[0].charAt(0).toUpperCase() + LAYER_NAMES[0].slice(1).toLowerCase()}
+            onIcon={<IoCart className={ICON_STYLE} />}
+            offIcon={<IoCartOutline className={ICON_STYLE} />}
+            className="fixed top-20"
           />
-          <SlideInMenu
-            menuItems={menuItems}
-            openIcon={<IoMapSharp className='h-6 w-12' />}
-            closeIcon={<IoCloseOutline className='h-6 w-6' />}
-            position='right'
-            topOffset='1rem'
+          <ToggleSwitch
+            initialState={true}
+            onToggle={newState => handleToggle(newState, LAYER_NAMES[1])}
+            hoverText={LAYER_NAMES[1].charAt(0).toUpperCase() + LAYER_NAMES[1].slice(1).toLowerCase()}
+            onIcon={<IoRestaurantSharp className={ICON_STYLE} />}
+            offIcon={<IoRestaurantOutline className={ICON_STYLE} />}
+            className="fixed top-32"
           />
-          {/*
-          <DarkModeSwitch
-            className="absolute top-0 right-0 m-2"
-            checked={isDarkMode}
-            onChange={(checked) => setDarkMode(checked)}
-            size={40}
+          <ToggleSwitch
+            initialState={true}
+            onToggle={newState => handleToggle(newState, LAYER_NAMES[2])}
+            hoverText={LAYER_NAMES[2].charAt(0).toUpperCase() + LAYER_NAMES[2].slice(1).toLowerCase()}
+            onIcon={<IoPricetagsSharp className={ICON_STYLE} />}
+            offIcon={<IoPricetagsOutline className={ICON_STYLE} />}
+            className="fixed top-44"
           />
-          */}
-
-          <div className="">
-            <ToggleSwitch
-              initialState={true}
-              onToggle={newState => handleToggle(newState, LAYER_NAMES[0])}
-              hoverText={LAYER_NAMES[0].charAt(0).toUpperCase() + LAYER_NAMES[0].slice(1).toLowerCase()}
-              onIcon={<IoCart className={ICON_STYLE} />}
-              offIcon={<IoCartOutline className={ICON_STYLE} />}
-              className="fixed right-4 top-20"
-            />
-            <ToggleSwitch
-              initialState={true}
-              onToggle={newState => handleToggle(newState, LAYER_NAMES[1])}
-              hoverText={LAYER_NAMES[1].charAt(0).toUpperCase() + LAYER_NAMES[1].slice(1).toLowerCase()}
-              onIcon={<IoRestaurantSharp className={ICON_STYLE} />}
-              offIcon={<IoRestaurantOutline className={ICON_STYLE} />}
-              className="fixed right-4 top-32"
-            />
-            <ToggleSwitch
-              initialState={true}
-              onToggle={newState => handleToggle(newState, LAYER_NAMES[2])}
-              hoverText={LAYER_NAMES[2].charAt(0).toUpperCase() + LAYER_NAMES[2].slice(1).toLowerCase()}
-              onIcon={<IoPricetagsSharp className={ICON_STYLE} />}
-              offIcon={<IoPricetagsOutline className={ICON_STYLE} />}
-              className="fixed right-4 top-44"
-            />
-
-          </div>
         </div>
         {!!selectedObject &&
           <DetailsPanel
@@ -99,7 +86,7 @@ export default function App() {
           </DetailsPanel>
         }
       </main>
-      <footer className="">
+      <footer className="bg-transparent absolute bottom-0 right-0 z-40 h-1">
         &copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors
       </footer>
     </div>

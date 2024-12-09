@@ -42,20 +42,8 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
   const [isColorBlind, setIsColorBlind] = useState(false);
 
   return (
-    <div className="absolute bottom-4 right-4">
-      <ToggleSwitch
-        initialState={false}
-        hoverText="Colorblind"
-        onToggle={newState => {
-          setIsColorBlind(newState);
-          onSchemeSelection(newState);
-        }}
-        offIcon={<IoEyeOutline className="w-4 h-4 text-black" />}
-        onIcon={<IoEye className="w-4 h-4 text-black" />}
-        size={4}
-        className="absolute -top-0 -right-0"
-      />
-      <div className="bg-gray-900 bg-opacity-70 p-2 rounded shadow-md">
+    <div className="absolute bottom-4 right-2">
+      <div className="bg-gray-900 bg-opacity-70 p-2 rounded-md shadow-md">
         {/*<h3 className="text-sm font-bold mb-1">CO2 PPM</h3>*/}
         <div className="grid gap-1 items-center">
           {[0, ...THRESHHOLDS].map((threshold, index) => {
@@ -82,6 +70,19 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
           })}
         </div>
       </div>
+      <ToggleSwitch
+        initialState={false}
+        hoverText="Colorblind"
+        onToggle={newState => {
+          setIsColorBlind(newState);
+          onSchemeSelection(newState);
+        }}
+        offIcon={<IoEyeOutline className="w-4 h-4 text-black" />}
+        onIcon={<IoEye className="w-4 h-4 text-black" />}
+        size={4}
+        className="absolute -top-0 -right-1"
+      />
+
     </div>
   );
 }

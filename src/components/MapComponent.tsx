@@ -1,6 +1,6 @@
 //import { Map, NavigationControl } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-//import { MapView } from '@deck.gl/core';
+// import { MapView } from '@deck.gl/core';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl/maplibre';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -108,41 +108,33 @@ export default function MapComponent(props: {
 
 
   return (
-    <div>
-      <DeckGL
-        // key={isColorBlind ? 'colorBlind' : 'default'} // To force re-render
-        layers={layers}
-        //views={new MapView()}
-        initialViewState={{
-          longitude: 0.45,
-          latitude: 51.47,
-          zoom: 5
-        }}
-        controller={{
-          scrollZoom: true,      // Allow zooming with the scroll wheel
-          dragPan: true,         // Allow panning (XY movement)
-          dragRotate: false,     // Disable map rotation
-          touchRotate: false     // Disable touch-based rotation
-        }}
-        getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
-
-      >
-        <Map
-          // mapStyle={props.isDarkMode ? mapStyles.CARTO_DARK : mapStyles.CARTO_LIGHT}
-          // mapStyle={props.isDarkMode ? mapStyles.MAPTILER_DARK : mapStyles.MAPTILER_LIGHT}
-          mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
-          // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-          //customAttribution={"&copy; OpenIAQ.org, IndoorCO2Map.com, MapTiler.com, OpenStreetMap contributors"}
-          // customAttribution={["foo", "bar"]} not working dec-8-2024
-          attributionControl={false} // Attributions elsewhere
-        />
-      </DeckGL>
-
-      <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-1 p-1 rounded-md">
+    <DeckGL
+      layers={layers}
+      //views={new MapView()}
+      initialViewState={{
+        longitude: 0.45,
+        latitude: 51.47,
+        zoom: 5
+      }}
+      controller={{
+        scrollZoom: true,      // Allow zooming with the scroll wheel
+        dragPan: true,         // Allow panning (XY movement)
+        dragRotate: false,     // Disable map rotation
+        touchRotate: false     // Disable touch-based rotation
+      }}
+      getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
+    >
+      <Map
+        mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
+        // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        // customAttribution={["foo", "bar"]} not working dec-8-2024
+        attributionControl={false} // Attributions elsewhere
+      />
+      <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-0 p-1 rounded-lg">
         <ColorLegend
           onSchemeSelection={newIsColorBlind => setIsColorBlind(newIsColorBlind)}
         />
       </div>
-    </div>
+    </DeckGL>
   );
 }

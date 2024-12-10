@@ -34,12 +34,12 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   };
 
   return (
-    <div className={`flex ${position}-2 ${className}`}>
+    <div className={`flex bg-gray-800 bg-opacity-60 rounded-full ${position}-2 ${className}`}>
 
       <button
         onClick={handleToggle}
         // Workaround bug for (size * 2) not working in tailwind
-        className={`${size == 4 ? "w-8" : "w-16"} py-1 rounded-full bg-gray-800 bg-opacity-60 `}
+        className={`${size == 4 ? "w-8" : "w-16"} py-1 rounded-full`}
       >
         <span
           onMouseEnter={() => setIsHovered(true)}

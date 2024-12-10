@@ -80,9 +80,8 @@ const ColorLegend: React.FC<ColorLegendProps> = ({ onSchemeSelection }) => {
         offIcon={<IoEyeOutline className="w-4 h-4 text-black" />}
         onIcon={<IoEye className="w-4 h-4 text-black" />}
         size={4}
-        className="absolute -top-0 -right-1"
+        className="absolute bg-opacity-95 -top-1.5 -right-1.5"
       />
-
     </div>
   );
 }

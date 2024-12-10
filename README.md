@@ -1,6 +1,8 @@
 # OpenIAQ map
 
-An interactive map displaying indoor air quality measurement data from multiple sources.
+An interactive map displaying Indoor Air Quality measurement data from multiple sources.
+
+Live map available at [OpenIAQ.org](https://www.openiaq.org/)
 
 
 ### Developed using React + TypeScript + Vite

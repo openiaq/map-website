@@ -103,6 +103,7 @@ export default function MapComponent(props: {
         getFillColor: [isColorBlind]
       },
       onClick: o => { props.onClick && props.onClick(o.object); }
+
     });
   });
 
@@ -123,6 +124,7 @@ export default function MapComponent(props: {
         touchRotate: false     // Disable touch-based rotation
       }}
       getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
+      getCursor={({ isHovering, isDragging }) => (isDragging ? 'grabbing' : (isHovering ? 'pointer' : 'grab'))}
     >
       <Map
         mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}

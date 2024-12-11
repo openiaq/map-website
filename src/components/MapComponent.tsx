@@ -6,6 +6,7 @@ import { Map } from 'react-map-gl/maplibre';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import ColorLegend, { colorFromValue } from './ColorLegend';
 import { useState } from 'react';
+import { TiLocationArrowOutline, TiLocationArrow } from "react-icons/ti";
 
 
 //const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -82,7 +83,11 @@ export default function MapComponent(props: {
   selectedLayerNames?: string[],
   onClick?: (o: Record<string, any>) => void,
 }) {
-
+  const [viewState, setViewState] = useState({
+    longitude: 8,
+    latitude: 50,
+    zoom: 4,
+  });
   const [isColorBlind, setIsColorBlind] = useState(false);
 
   let layers = Object.entries(layerSpecs).map(([name, regEx]) => {
@@ -102,41 +107,81 @@ export default function MapComponent(props: {
       updateTriggers: {
         getFillColor: [isColorBlind]
       },
-      onClick: o => { props.onClick && props.onClick(o.object); }
-
+      onClick: o => { props.onClick && props.onClick(o.object); },
     });
   });
 
+  const updateLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log(`>>>>> position=${JSON.stringify(position)}`);
+          const { latitude, longitude } = position.coords;
+          setViewState((prev) => ({
+            ...prev,
+            latitude,
+            longitude,
+          }));
+        },
+        (error) => {
+          console.error('Error fetching geolocation:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  };
+
 
   return (
-    <DeckGL
-      layers={layers}
-      //views={new MapView()}
-      initialViewState={{
-        longitude: 0.45,
-        latitude: 51.47,
-        zoom: 5
-      }}
-      controller={{
-        scrollZoom: true,      // Allow zooming with the scroll wheel
-        dragPan: true,         // Allow panning (XY movement)
-        dragRotate: false,     // Disable map rotation
-        touchRotate: false     // Disable touch-based rotation
-      }}
-      getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO\u2082 
-      getCursor={({ isHovering, isDragging }) => (isDragging ? 'grabbing' : (isHovering ? 'pointer' : 'grab'))}
-    >
-      <Map
-        mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
-        // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-        // customAttribution={["foo", "bar"]} not working dec-8-2024
-        attributionControl={false} // Attributions elsewhere
-      />
-      <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-0 p-1 rounded-lg">
-        <ColorLegend
-          onSchemeSelection={newIsColorBlind => setIsColorBlind(newIsColorBlind)}
+    <div>
+      <button
+        style={{
+          position: 'absolute',
+          top: 20,
+          left: 20,
+          zIndex: 1,
+          cursor: 'pointer',
+        }}
+        onClick={updateLocation}
+      >
+        <TiLocationArrowOutline className="w-10 h-10 p-1 text-black bg-gray-300 rounded-lg" />
+      </button>
+
+      <DeckGL
+        layers={layers}
+        initialViewState={viewState}
+        controller={{
+          scrollZoom: true,      // Allow zooming with the scroll wheel
+          dragPan: true,         // Allow panning (XY movement)
+          dragRotate: false,     // Disable map rotation
+          touchRotate: false     // Disable touch-based rotation
+        }}
+        getTooltip={({ object: obj }) => obj && `${obj.name}: ${obj.co2Avg}`} // CO₂
+        getCursor={({ isHovering, isDragging }) => (isDragging ? 'grabbing' : (isHovering ? 'pointer' : 'grab'))}
+        onViewStateChange={(newState) => {
+          const vs: any = newState.viewState; // Defeat type checking
+          setViewState(
+            {
+              longitude: vs.longitude,
+              latitude: vs.latitude,
+              zoom: vs.zoom,
+            }
+          );
+        }}
+      >
+        <Map
+          mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
+          // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+          // customAttribution={["foo", "bar"]} not working dec-8-2024
+          attributionControl={false} // Attributions elsewhere
         />
-      </div>
-    </DeckGL>
+        <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-0 p-1 rounded-lg">
+          <ColorLegend
+            onSchemeSelection={newIsColorBlind => setIsColorBlind(newIsColorBlind)}
+          />
+        </div>
+      </DeckGL>
+    </div>
   );
 }

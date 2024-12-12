@@ -136,16 +136,10 @@ export default function MapComponent(props: {
   return (
     <div>
       <button
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 20,
-          zIndex: 1,
-          cursor: 'pointer',
-        }}
+        className="absolute top-3 left-3 z-10 cursor-pointer"
         onClick={updateLocation}
       >
-        <TiLocationArrowOutline className="w-10 h-10 p-1 text-black bg-gray-300 rounded-lg" />
+        <TiLocationArrowOutline className="w-7 h-7 border-gray-800 border-2 border-opacity-60 text-black bg-white rounded-full" />
       </button>
 
       <DeckGL
@@ -173,7 +167,7 @@ export default function MapComponent(props: {
         <Map
           mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
           // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-          // customAttribution={["foo", "bar"]} not working dec-8-2024
+          // customAttribution={["&copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors"]}
           attributionControl={false} // Attributions elsewhere
         />
         <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-0 p-1 rounded-lg">

@@ -7,12 +7,14 @@ import { IoRestaurantSharp, IoRestaurantOutline } from "react-icons/io5";
 import { IoPricetagsSharp, IoPricetagsOutline } from "react-icons/io5";
 import { IoCart, IoCartOutline } from "react-icons/io5";
 import DetailsPanel from './components/DetailsPanel';
+import LineChart from './components/LineChart';
 
 
 export default function App() {
   const [mapStyle, setMapStyle] = useState("");
   const [layerNames, setLayerNames] = useState<string[]>(LAYER_NAMES);
   const [selectedObject, setSelectedObject] = useState<Record<string, any> | null>(null);
+  //const [graphData, setGraphData] = useState<{ x: number, y: number }[]>([]);
 
   const handleToggle = (newState: boolean, layerName: string) => {
     // setLayerNames must return new Array, or state change will be ignored
@@ -81,8 +83,16 @@ export default function App() {
             onClose={() => setSelectedObject(null)}
           >
             <h1 className="text-xl font-bold">{selectedObject?.name ?? "Unnamed"}</h1>
+            <LineChart
+              data={
+                Array.isArray(selectedObject.allMeasurements[0].co2readings) ?
+                  selectedObject.allMeasurements[0].co2readings.map((ppm: number, i: number) => {
+                    return { x: i, y: ppm };
+                  })
+                  : []
+              }
+            />
             <code>{JSON.stringify(selectedObject, null, 4)}</code>
-
           </DetailsPanel>
         }
       </main>

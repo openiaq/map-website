@@ -22,7 +22,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
-    "react-map-gl": "^7.1.7"
+    "react-map-gl": "^7.1.7",
+    "victory": "^37.3.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

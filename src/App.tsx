@@ -9,12 +9,12 @@ import { IoCart, IoCartOutline } from "react-icons/io5";
 import DetailsPanel from './components/DetailsPanel';
 import LineChart from './components/LineChart';
 
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export default function App() {
   const [mapStyle, setMapStyle] = useState("");
   const [layerNames, setLayerNames] = useState<string[]>(LAYER_NAMES);
   const [selectedObject, setSelectedObject] = useState<Record<string, any> | null>(null);
-  //const [graphData, setGraphData] = useState<{ x: number, y: number }[]>([]);
 
   const handleToggle = (newState: boolean, layerName: string) => {
     // setLayerNames must return new Array, or state change will be ignored
@@ -96,7 +96,7 @@ export default function App() {
           </DetailsPanel>
         }
       </main>
-      <footer className="bg-transparent absolute bottom-0 right-0 z-40 h-1">
+      <footer className="fixed bg-white opacity-60 rounded-lg bottom-0 right-1 z-40 text-sm">
         &copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors
       </footer>
     </div>

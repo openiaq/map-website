@@ -7,7 +7,9 @@ import { IoRestaurantSharp, IoRestaurantOutline } from "react-icons/io5";
 import { IoPricetagsSharp, IoPricetagsOutline } from "react-icons/io5";
 import { IoCart, IoCartOutline } from "react-icons/io5";
 import DetailsPanel from './components/DetailsPanel';
+import LineChart from './components/LineChart';
 
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export default function App() {
   const [mapStyle, setMapStyle] = useState("");
@@ -81,12 +83,20 @@ export default function App() {
             onClose={() => setSelectedObject(null)}
           >
             <h1 className="text-xl font-bold">{selectedObject?.name ?? "Unnamed"}</h1>
+            <LineChart
+              data={
+                Array.isArray(selectedObject.allMeasurements[0].co2readings) ?
+                  selectedObject.allMeasurements[0].co2readings.map((ppm: number, i: number) => {
+                    return { x: i, y: ppm };
+                  })
+                  : []
+              }
+            />
             <code>{JSON.stringify(selectedObject, null, 4)}</code>
-
           </DetailsPanel>
         }
       </main>
-      <footer className="bg-transparent absolute bottom-0 right-0 z-40 h-1">
+      <footer className="fixed bg-white opacity-60 rounded-lg bottom-0 right-1 z-40 text-sm">
         &copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors
       </footer>
     </div>

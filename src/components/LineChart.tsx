@@ -6,20 +6,34 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ data }) => {
+  let minPpm = 400;
+  let maxPpm = 400;
+  data.map(d => {
+    minPpm = Math.min(minPpm, d.y);
+    maxPpm = Math.max(maxPpm, d.y);
+  });
+
   return (
     <VictoryChart
       theme={VictoryTheme.clean}
-      containerComponent={
-        <VictoryVoronoiContainer
-          voronoiDimension="x"
-          labels={({ datum }) =>
-            `${datum.y} ppm`
-          }
-          labelComponent={
-            <VictoryTooltip />
-          }
-        />
-      }
+      domain={{
+        x: [0, data.length + 1],
+        y: [minPpm, maxPpm + 20],
+      }}
+
+    /* Tooltip not working well
+    containerComponent={
+      <VictoryVoronoiContainer
+        voronoiDimension="x"
+        labels={({ datum }) =>
+          `${datum.y} ppm`
+        }
+        labelComponent={
+          <VictoryTooltip />
+        }
+      />
+    }
+   */
     >
       <VictoryLine
         style={{ data: { stroke: "#565656" } }}
@@ -27,7 +41,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
         x="x"
         y="y"
       />
-
+      <VictoryScatter data={data} />
     </VictoryChart>
   );
 };

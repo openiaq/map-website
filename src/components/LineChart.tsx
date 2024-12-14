@@ -15,7 +15,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, className = "" }) => {
   });
 
   return (
-    <div className={`max-w-xl ${className}`}>
+    <div className={`max-w-lg border border-gray-500 border-solid rounded-lg bg-gray-100 ${className}`}>
       <VictoryChart
         theme={VictoryTheme.clean}
         domain={{

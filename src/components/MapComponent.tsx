@@ -118,6 +118,7 @@ export default function MapComponent(props: {
         getLineWidth: [searchString],
       },
       onClick: o => { props.onClick && props.onClick(o.object); },
+      autoHighlight: true
     });
   });
 
@@ -190,7 +191,7 @@ export default function MapComponent(props: {
           value={searchString}
           onChange={event => setSearchString(event.target.value.toLowerCase())}
           placeholder={searchString || 'Search...'}
-          className={"absolute bottom-5 left-1 bg-white border border-gray-800 rounded-lg"}
+          className={"absolute bottom-5 left-1 p-0.5 bg-white border border-gray-700 rounded-lg"}
         />
 
       </DeckGL>

@@ -97,7 +97,7 @@ export default function App() {
         }
       </main>
       <footer className="fixed bg-white opacity-60 rounded-lg bottom-0 right-1 z-40 text-sm">
-        &copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors
+        &copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap
       </footer>
     </div>
   )

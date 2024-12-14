@@ -89,25 +89,36 @@ export default function MapComponent(props: {
     zoom: 4,
   });
   const [isColorBlind, setIsColorBlind] = useState(false);
+  const [searchString, setSearchString] = useState("");
 
-  let layers = Object.entries(layerSpecs).map(([name, regEx]) => {
+  function isFound(d: any): boolean {
+    if (!d) {
+      return false;
+    }
+    return d.name.toLowerCase().includes(searchString);
+  }
+
+  let layers = Object.entries(layerSpecs).map(([layerName, regEx]) => {
     return new ScatterplotLayer({
-      id: name,
+      id: layerName,
       data: 'https://indoorco2map.com/chartdata/IndoorCO2MapData.json',
       dataTransform: filteredDataTransform(regEx),
       getFillColor: d => [...colorFromValue(d.co2Avg, isColorBlind), (.75 * 255)],
       getLineColor: [0, 0, 0, 255],
       stroked: true,
-      getLineWidth: 1,
+      getLineWidth: d => isFound(d) ? 1 : 0,
       lineWidthUnits: 'pixels',
       radiusUnits: 'pixels',
-      getRadius: 7,
+      getRadius: d => isFound(d) ? 7 : 0,
       pickable: true,
-      visible: props.selectedLayerNames?.includes(name),
+      visible: props.selectedLayerNames?.includes(layerName),
       updateTriggers: {
-        getFillColor: [isColorBlind]
+        getFillColor: [isColorBlind],
+        getRadius: [searchString],
+        getLineWidth: [searchString],
       },
       onClick: o => { props.onClick && props.onClick(o.object); },
+      autoHighlight: true
     });
   });
 
@@ -139,7 +150,7 @@ export default function MapComponent(props: {
         className="absolute top-3 left-3 z-10 cursor-pointer"
         onClick={updateLocation}
       >
-        <TiLocationArrowOutline className="w-7 h-7 border-gray-800 border-2 border-opacity-60 text-black bg-white rounded-full" />
+        <TiLocationArrowOutline className="w-7 h-7 border-gray-800 border-2 border-opacity-60 text-black bg-white opacity-80 rounded-full" />
       </button>
 
       <DeckGL
@@ -167,7 +178,7 @@ export default function MapComponent(props: {
         <Map
           mapStyle={mapStyles[props.mapStyle] || mapStyles.MAPTILER_OSM}
           // mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-          // customAttribution={["&copy; OpenIAQ.org, IndoorCO2Map.com, OpenStreetMap contributors"]}
+          // customAttribution={["foo", "bar"]} not working dec-8-2024
           attributionControl={false} // Attributions elsewhere
         />
         <div className="text-white bg-gray-800 bg-opacity-60 absolute bottom-5 right-0 p-1 rounded-lg">
@@ -175,6 +186,14 @@ export default function MapComponent(props: {
             onSchemeSelection={newIsColorBlind => setIsColorBlind(newIsColorBlind)}
           />
         </div>
+        <input
+          type="text"
+          value={searchString}
+          onChange={event => setSearchString(event.target.value.toLowerCase())}
+          placeholder={searchString || 'Search...'}
+          className={"absolute bottom-5 left-1 p-0.5 bg-white border border-gray-700 rounded-lg"}
+        />
+
       </DeckGL>
     </div>
   );

@@ -19,12 +19,20 @@ const DetailsPanel: React.FC<DetailsPanelProps> = ({ isOpen, onClose, children }
   return (
     <div
       ref={panelRef}
-      className={`fixed bg-white rounded-t-2xl md:rounded-l-none md:rounded-r-2xl shadow-lg transform transition-transform duration-300 ${isOpen
-        ? "translate-x-0 md:translate-y-0" // Open state
-        : "translate-y-full md:-translate-x-full" // Closed state
-        } top-auto md:top-0 left-0 md:left-0 bottom-0 z-50 w-full overflow-y-auto md:w-1/3 h-1/3 md:h-full`}
+      className={`fixed bg-white z-50 overflow-auto
+          transform transition-transform duration-1000 
+        ${isOpen ?
+          "portrait:translate-y-0  portrait:h-1/3  portrait:w-full  portrait:bottom-0 portrait:rounded-t-2xl " +
+          "landscape:translate-x-0 landscape:w-1/3 landscape:h-full landscape:top-0   landscape:rounded-r-2xl "
+          :
+          "portrait:translate-y-full landscape:-translate-x-full pointer-events-none"
+        }
+          overflow-y-auto
+        `}
+
+
     >
-      
+
       <div className="p-4">{children}</div>
 
       {/* Close Button after children to ensure it's on top */}

@@ -3,9 +3,10 @@ import { VictoryChart, VictoryLine, VictoryAxis, VictoryTheme, VictoryScatter, V
 
 interface LineChartProps {
   data: { x: string | number; y: number }[];
+  className?: string; // TailwindCSS styles
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data }) => {
+const LineChart: React.FC<LineChartProps> = ({ data, className = "" }) => {
   let minPpm = 400;
   let maxPpm = 400;
   data.map(d => {
@@ -14,35 +15,37 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
   });
 
   return (
-    <VictoryChart
-      theme={VictoryTheme.clean}
-      domain={{
-        x: [0, data.length + 1],
-        y: [minPpm, maxPpm + 20],
-      }}
+    <div className={`max-w-lg border border-gray-500 border-solid rounded-lg bg-gray-100 ${className}`}>
+      <VictoryChart
+        theme={VictoryTheme.clean}
+        domain={{
+          x: [0, data.length + 1],
+          y: [minPpm, maxPpm + 20],
+        }}
 
-    /* Tooltip not working well
-    containerComponent={
-      <VictoryVoronoiContainer
-        voronoiDimension="x"
-        labels={({ datum }) =>
-          `${datum.y} ppm`
-        }
-        labelComponent={
-          <VictoryTooltip />
-        }
-      />
-    }
-   */
-    >
-      <VictoryLine
-        style={{ data: { stroke: "#565656" } }}
-        data={data}
-        x="x"
-        y="y"
-      />
-      <VictoryScatter data={data} />
-    </VictoryChart>
+      /* Tooltip not working well
+      containerComponent={
+        <VictoryVoronoiContainer
+          voronoiDimension="x"
+          labels={({ datum }) =>
+            `${datum.y} ppm`
+          }
+          labelComponent={
+            <VictoryTooltip />
+          }
+        />
+      }
+     */
+      >
+        <VictoryLine
+          style={{ data: { stroke: "#565656" } }}
+          data={data}
+          x="x"
+          y="y"
+        />
+        <VictoryScatter data={data} />
+      </VictoryChart>
+    </div >
   );
 };
 

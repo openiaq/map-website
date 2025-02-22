@@ -5,7 +5,7 @@ import { ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl/maplibre';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import ColorLegend, { colorFromValue } from './ColorLegend';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TiLocationArrowOutline, TiLocationArrow } from "react-icons/ti";
 
 
@@ -83,13 +83,15 @@ export default function MapComponent(props: {
   selectedLayerNames?: string[],
   onClick?: (o: Record<string, any>) => void,
 }) {
-  const [viewState, setViewState] = useState({
-    longitude: 8,
-    latitude: 50,
-    zoom: 4,
-  });
   const [isColorBlind, setIsColorBlind] = useState(false);
   const [searchString, setSearchString] = useState("");
+  const [userLocation, setUserLocation] = useState<{ latitude: number, longitude: number } | null>(null);
+  const [viewState, setViewState] = useState({
+    longitude: userLocation?.longitude || 8, // Default to Germany
+    latitude: userLocation?.latitude || 50,
+    zoom: 4,
+  });
+
 
   function isFound(d: any): boolean {
     if (!d) {
@@ -122,7 +124,20 @@ export default function MapComponent(props: {
     });
   });
 
-  const updateLocation = () => {
+  const userLocationLayer = userLocation && new ScatterplotLayer({
+    id: "user-location",
+    data: [{ position: [userLocation?.longitude, userLocation?.latitude] }],
+    getFillColor: [0, 0, 255, 190],
+    getLineColor: [255, 255, 255, 255],
+    stroked: true,
+    getLineWidth: 1,
+    lineWidthUnits: 'pixels',
+    getRadius: 80,
+    radiusMinPixels: 6,
+    //visible: !!userLocation,
+  });
+
+  function updateLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -133,6 +148,7 @@ export default function MapComponent(props: {
             latitude,
             longitude,
           }));
+          setUserLocation({ latitude, longitude });
         },
         (error) => {
           console.error('Error fetching geolocation:', error);
@@ -143,6 +159,13 @@ export default function MapComponent(props: {
     }
   };
 
+  useEffect(() => {
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      if (result.state === "granted") {
+        updateLocation();
+      }
+    });
+  }, []);
 
   return (
     <div>
@@ -154,7 +177,7 @@ export default function MapComponent(props: {
       </button>
 
       <DeckGL
-        layers={layers}
+        layers={[layers, userLocationLayer]}
         initialViewState={viewState}
         controller={{
           scrollZoom: true,      // Allow zooming with the scroll wheel
@@ -193,7 +216,6 @@ export default function MapComponent(props: {
           placeholder={searchString || 'Search...'}
           className={"absolute bottom-5 left-1 p-0.5 bg-white border border-gray-700 rounded-lg"}
         />
-
       </DeckGL>
     </div>
   );

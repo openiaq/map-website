@@ -14,7 +14,7 @@ $ npm install
 $ npm run dev
 ```
 
-To build for production (`dist` directory):
+To build for production (in`dist/` directory):
 
 ```bash
 $ npm run build

@@ -54,7 +54,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       {
         hoverText && isHovered && (
           <span
-            className={`fixed right-20 flex bg-gray-700 bg-opacity-40 text-white text-sm rounded px-2 shadow`}
+            className={`fixed right-20 flex bg-gray-700 bg-opacity-40 text-white text-sm rounded-sm px-2 shadow-sm`}
           >
             {hoverText}
           </span>
